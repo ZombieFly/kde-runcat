@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <entry name="useIdleFrame" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="idleThreshold" type="Int">
+      <default>2</default>
+    </entry>
+    <entry name="slowCycleMs" type="Int">
+      <default>2500</default>
+    </entry>
+    <entry name="fastCycleMs" type="Int">
+      <default>150</default>
+    </entry>
+    <entry name="maxFps" type="Int">
+      <default>30</default>
+    </entry>
+    <entry name="smoothingPercent" type="Int">
+      <default>40</default>
+    </entry>
+    <entry name="flipHorizontally" type="Bool">
+      <default>false</default>
+    </entry>
+  </group>
+</kcfg>

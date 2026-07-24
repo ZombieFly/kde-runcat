@@ -1,0 +1,19 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "RunCat contributors"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "A cat whose running speed reflects the current CPU load",
+        "EnabledByDefault": true,
+        "Icon": "utilities-system-monitor",
+        "Id": "com.github.runcatkde.runcat",
+        "License": "Apache-2.0",
+        "Name": "RunCat",
+        "Version": "0.1.5"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
