@@ -5,6 +5,8 @@ increases and rests when the system is idle. It is designed for KDE Plasma on
 Wayland and uses Plasma's existing system-monitor sensor, so no background
 daemon is required.
 
+![RunCat responding to CPU usage](assets/runcat-demo.gif)
+
 ## Requirements
 
 - KDE Plasma 6
