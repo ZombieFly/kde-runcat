@@ -7,7 +7,7 @@
             }
         ],
         "Category": "System Information",
-        "Description": "A cat whose running speed reflects the current CPU load",
+        "Description": "An animated runner whose speed reflects the current CPU load",
         "EnabledByDefault": true,
         "Icon": "utilities-system-monitor",
         "Id": "com.github.runcatkde.runcat",

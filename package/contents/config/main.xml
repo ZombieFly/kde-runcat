@@ -10,6 +10,9 @@
     <entry name="idleThreshold" type="Int">
       <default>2</default>
     </entry>
+    <entry name="runner" type="String">
+      <default>cat</default>
+    </entry>
     <entry name="speedPercent" type="Int">
       <default>100</default>
     </entry>

@@ -5,11 +5,19 @@ import QtQuick.Layouts
 import org.kde.kcmutils as KCM
 import org.kde.kirigami as Kirigami
 
+import "../../code/runners.js" as RunnerSelection
+
 KCM.SimpleKCM {
+    id: behavior
+
+    readonly property var runnerIds: RunnerSelection.availableRunnerIds()
+
     property alias cfg_useIdleFrame: useIdleFrame.checked
     property bool cfg_useIdleFrameDefault
     property alias cfg_idleThreshold: idleThreshold.value
     property int cfg_idleThresholdDefault
+    property string cfg_runner
+    property string cfg_runnerDefault
     property alias cfg_speedPercent: speedPercent.value
     property int cfg_speedPercentDefault
     property alias cfg_flipHorizontally: flipHorizontally.checked
@@ -36,6 +44,27 @@ KCM.SimpleKCM {
             valueFromText: function(text) { return parseInt(text, 10); }
         }
 
+        ComboBox {
+            id: runner
+
+            model: [
+                i18n("Cat"),
+                i18n("Dog"),
+                i18n("Slime"),
+                i18n("Drop"),
+                i18n("Coffee"),
+                i18n("Newton's cradle"),
+                i18n("Engine"),
+                i18n("Mochi")
+            ]
+            currentIndex: Math.max(
+                0,
+                behavior.runnerIds.indexOf(behavior.cfg_runner)
+            )
+            Kirigami.FormData.label: i18n("Runner:")
+            onActivated: behavior.cfg_runner = behavior.runnerIds[currentIndex]
+        }
+
         SpinBox {
             id: speedPercent
             from: 25
@@ -48,12 +77,12 @@ KCM.SimpleKCM {
 
         CheckBox {
             id: flipHorizontally
-            text: i18n("Run in the opposite direction")
+            text: i18n("Flip runner horizontally")
         }
 
         CheckBox {
             id: showCpuUsage
-            text: i18n("Show CPU usage next to the cat")
+            text: i18n("Show CPU usage next to the runner")
         }
 
         CheckBox {
@@ -64,7 +93,7 @@ KCM.SimpleKCM {
         Label {
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
-            text: i18n("When enabled, the cat runs faster at low CPU usage and slower at high CPU usage.")
+            text: i18n("When enabled, the runner moves faster at low CPU usage and slower at high CPU usage.")
             opacity: 0.7
         }
     }

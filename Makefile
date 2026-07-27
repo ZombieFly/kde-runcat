@@ -18,6 +18,7 @@ check:
 		$(PACKAGE_DIR)/contents/ui/config/ConfigBehavior.qml \
 		$(PACKAGE_DIR)/contents/config/config.qml \
 		tests/tst_animation.qml \
+		tests/tst_runners.qml \
 		tests/tst_sensors.qml
 
 test:

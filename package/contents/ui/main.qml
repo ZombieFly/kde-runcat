@@ -12,6 +12,7 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 
 import "../code/animation.js" as Animation
+import "../code/runners.js" as RunnerSelection
 import "../code/sensors.js" as SensorSelection
 
 PlasmoidItem {
@@ -21,14 +22,20 @@ PlasmoidItem {
     readonly property int defaultFastCycleMs: 150
     readonly property int defaultMaxFps: 30
     readonly property real defaultSmoothing: 0.4
-    readonly property var runningFrames: [
-        Qt.resolvedUrl("../images/cat/run-0.png"),
-        Qt.resolvedUrl("../images/cat/run-1.png"),
-        Qt.resolvedUrl("../images/cat/run-2.png"),
-        Qt.resolvedUrl("../images/cat/run-3.png"),
-        Qt.resolvedUrl("../images/cat/run-4.png")
-    ]
-    readonly property url idleFrame: Qt.resolvedUrl("../images/cat/idle.png")
+    readonly property string runnerId: RunnerSelection.normalizeRunnerId(
+        Plasmoid.configuration.runner
+    )
+    readonly property var runningFrames: RunnerSelection.frameOrder(runnerId).map(
+        function(frameNumber) {
+            return Qt.resolvedUrl(
+                "../images/" + root.runnerId + "/run-" + frameNumber + ".png"
+            );
+        }
+    )
+    readonly property url idleFrame: runnerId === "cat"
+        ? Qt.resolvedUrl("../images/cat/idle.png")
+        : runningFrames[0]
+    readonly property real runnerAspectRatio: RunnerSelection.aspectRatio(runnerId)
     readonly property bool vertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property bool isIdle: Plasmoid.configuration.useIdleFrame
         && sensorReady
@@ -50,6 +57,8 @@ PlasmoidItem {
     property string cpuTemperatureSensorId: ""
     property string gpuUsageSensorId: ""
     property string localIpv4SensorId: ""
+
+    onRunnerIdChanged: frameIndex = 0
 
     function updateCpu(rawValue) {
         const value = Number(rawValue);
@@ -126,30 +135,30 @@ PlasmoidItem {
     compactRepresentation: Item {
         id: representation
 
-        readonly property real catImplicitWidth: root.vertical
+        readonly property real runnerImplicitWidth: root.vertical
             ? Kirigami.Units.iconSizes.medium
-            : Math.round(catImplicitHeight * 14 / 9)
-        readonly property real catImplicitHeight: root.vertical
-            ? Math.round(Kirigami.Units.iconSizes.medium * 9 / 14)
+            : Math.round(runnerImplicitHeight * root.runnerAspectRatio)
+        readonly property real runnerImplicitHeight: root.vertical
+            ? Math.round(Kirigami.Units.iconSizes.medium / root.runnerAspectRatio)
             : Kirigami.Units.iconSizes.medium
-        readonly property real catMinimumWidth: root.vertical
+        readonly property real runnerMinimumWidth: root.vertical
             ? Kirigami.Units.iconSizes.small
-            : Math.round(catMinimumHeight * 14 / 9)
-        readonly property real catMinimumHeight: root.vertical
-            ? Math.round(Kirigami.Units.iconSizes.small * 9 / 14)
+            : Math.round(runnerMinimumHeight * root.runnerAspectRatio)
+        readonly property real runnerMinimumHeight: root.vertical
+            ? Math.round(Kirigami.Units.iconSizes.small / root.runnerAspectRatio)
             : Kirigami.Units.iconSizes.small
         readonly property real cpuLabelWidth: cpuLabelMetrics.advanceWidth
         readonly property real labelSpacing: Plasmoid.configuration.showCpuUsage
             ? Kirigami.Units.smallSpacing
             : 0
 
-        implicitWidth: catImplicitWidth + labelSpacing
+        implicitWidth: runnerImplicitWidth + labelSpacing
             + (Plasmoid.configuration.showCpuUsage ? cpuLabelWidth : 0)
-        implicitHeight: catImplicitHeight
+        implicitHeight: runnerImplicitHeight
 
-        Layout.minimumWidth: catMinimumWidth + labelSpacing
+        Layout.minimumWidth: runnerMinimumWidth + labelSpacing
             + (Plasmoid.configuration.showCpuUsage ? cpuLabelWidth : 0)
-        Layout.minimumHeight: catMinimumHeight
+        Layout.minimumHeight: runnerMinimumHeight
         Layout.preferredWidth: implicitWidth
         Layout.preferredHeight: implicitHeight
 
