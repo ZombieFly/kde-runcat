@@ -22,14 +22,18 @@ function cycleDuration(cpuUsage, slowCycleMs, fastCycleMs, reverseSpeed) {
 }
 
 function frameInterval(cpuUsage, frameCount, slowCycleMs, fastCycleMs, maxFps,
-                       reverseSpeed) {
+                       reverseSpeed, speedPercent) {
     const frames = Math.max(1, frameCount);
-    const fps = Math.max(1, maxFps);
+    const numericSpeed = Number(speedPercent);
+    const speedScale = Number.isFinite(numericSpeed)
+        ? clamp(numericSpeed, 25, 200) / 100
+        : 1;
+    const fps = Math.max(1, maxFps) * Math.max(1, speedScale);
     const desired = cycleDuration(
         cpuUsage,
         slowCycleMs,
         fastCycleMs,
         reverseSpeed
-    ) / frames;
+    ) / frames / speedScale;
     return Math.max(1000 / fps, desired);
 }

@@ -10,17 +10,8 @@
     <entry name="idleThreshold" type="Int">
       <default>2</default>
     </entry>
-    <entry name="slowCycleMs" type="Int">
-      <default>2500</default>
-    </entry>
-    <entry name="fastCycleMs" type="Int">
-      <default>150</default>
-    </entry>
-    <entry name="maxFps" type="Int">
-      <default>30</default>
-    </entry>
-    <entry name="smoothingPercent" type="Int">
-      <default>40</default>
+    <entry name="speedPercent" type="Int">
+      <default>100</default>
     </entry>
     <entry name="flipHorizontally" type="Bool">
       <default>false</default>

@@ -17,6 +17,10 @@ import "../code/sensors.js" as SensorSelection
 PlasmoidItem {
     id: root
 
+    readonly property int defaultSlowCycleMs: 2500
+    readonly property int defaultFastCycleMs: 150
+    readonly property int defaultMaxFps: 30
+    readonly property real defaultSmoothing: 0.4
     readonly property var runningFrames: [
         Qt.resolvedUrl("../images/cat/run-0.png"),
         Qt.resolvedUrl("../images/cat/run-1.png"),
@@ -32,10 +36,11 @@ PlasmoidItem {
     readonly property real frameInterval: Animation.frameInterval(
         smoothedCpu,
         runningFrames.length,
-        Plasmoid.configuration.slowCycleMs,
-        Plasmoid.configuration.fastCycleMs,
-        Plasmoid.configuration.maxFps,
-        Plasmoid.configuration.reverseSpeed
+        defaultSlowCycleMs,
+        defaultFastCycleMs,
+        defaultMaxFps,
+        Plasmoid.configuration.reverseSpeed,
+        Plasmoid.configuration.speedPercent
     )
 
     property real smoothedCpu: 0
@@ -63,7 +68,7 @@ PlasmoidItem {
         smoothedCpu = Animation.smooth(
             smoothedCpu,
             bounded,
-            Plasmoid.configuration.smoothingPercent / 100
+            defaultSmoothing
         );
     }
 

@@ -59,4 +59,16 @@ TestCase {
         compare(Animation.frameInterval(0, 5, 2500, 250, 60, true), 50);
         compare(Animation.frameInterval(100, 5, 2500, 250, 60, true), 500);
     }
+
+    function test_frameInterval_scales_running_speed() {
+        compare(Animation.frameInterval(0, 5, 2500, 250, 60, false, 50), 1000);
+        compare(Animation.frameInterval(0, 5, 2500, 250, 60, false, 100), 500);
+        compare(Animation.frameInterval(0, 5, 2500, 250, 60, false, 200), 250);
+    }
+
+    function test_frameInterval_defaults_and_clamps_speed() {
+        compare(Animation.frameInterval(0, 5, 2500, 250, 60, false), 500);
+        compare(Animation.frameInterval(0, 5, 2500, 250, 60, false, 0), 2000);
+        compare(Animation.frameInterval(0, 5, 2500, 250, 60, false, 500), 250);
+    }
 }
