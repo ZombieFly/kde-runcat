@@ -9,20 +9,27 @@ function smooth(previous, current, alpha) {
     return previous + (current - previous) * weight;
 }
 
-function cycleDuration(cpuUsage, slowCycleMs, fastCycleMs) {
+function cycleDuration(cpuUsage, slowCycleMs, fastCycleMs, reverseSpeed) {
     const low = Math.min(slowCycleMs, fastCycleMs);
     const high = Math.max(slowCycleMs, fastCycleMs);
-    const load = clamp(cpuUsage, 0, 100) / 100;
+    const boundedCpu = clamp(cpuUsage, 0, 100);
+    const load = (reverseSpeed ? 100 - boundedCpu : boundedCpu) / 100;
 
-    // Interpolate geometrically so medium and high load feels much faster
-    // while preserving the configured idle and maximum cycle durations.
+    // Geometric interpolation emphasizes changes near the fast end while
+    // preserving the configured minimum and maximum cycle durations.
     const speed = Math.pow(load, 0.55);
     return high * Math.pow(low / high, speed);
 }
 
-function frameInterval(cpuUsage, frameCount, slowCycleMs, fastCycleMs, maxFps) {
+function frameInterval(cpuUsage, frameCount, slowCycleMs, fastCycleMs, maxFps,
+                       reverseSpeed) {
     const frames = Math.max(1, frameCount);
     const fps = Math.max(1, maxFps);
-    const desired = cycleDuration(cpuUsage, slowCycleMs, fastCycleMs) / frames;
+    const desired = cycleDuration(
+        cpuUsage,
+        slowCycleMs,
+        fastCycleMs,
+        reverseSpeed
+    ) / frames;
     return Math.max(1000 / fps, desired);
 }

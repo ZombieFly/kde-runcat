@@ -34,7 +34,8 @@ PlasmoidItem {
         runningFrames.length,
         Plasmoid.configuration.slowCycleMs,
         Plasmoid.configuration.fastCycleMs,
-        Plasmoid.configuration.maxFps
+        Plasmoid.configuration.maxFps,
+        Plasmoid.configuration.reverseSpeed
     )
 
     property real smoothedCpu: 0

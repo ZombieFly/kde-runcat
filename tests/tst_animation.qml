@@ -37,6 +37,13 @@ TestCase {
         verify(Animation.cycleDuration(75, 2500, 250) < 400);
     }
 
+    function test_cycleDuration_can_reverse_cpu_mapping() {
+        compare(Animation.cycleDuration(0, 2500, 250, true), 250);
+        compare(Animation.cycleDuration(100, 2500, 250, true), 2500);
+        verify(Animation.cycleDuration(25, 2500, 250, true)
+               < Animation.cycleDuration(75, 2500, 250, true));
+    }
+
     function test_frameInterval_respects_fps_limit() {
         fuzzyCompare(Animation.frameInterval(100, 5, 2500, 50, 30),
                      1000 / 30, 0.001);
@@ -46,5 +53,10 @@ TestCase {
     function test_frameInterval_normalizes_reversed_cycle_settings() {
         compare(Animation.frameInterval(0, 5, 250, 2500, 60), 500);
         compare(Animation.frameInterval(100, 5, 250, 2500, 60), 50);
+    }
+
+    function test_frameInterval_reverses_cpu_mapping() {
+        compare(Animation.frameInterval(0, 5, 2500, 250, 60, true), 50);
+        compare(Animation.frameInterval(100, 5, 2500, 250, 60, true), 500);
     }
 }

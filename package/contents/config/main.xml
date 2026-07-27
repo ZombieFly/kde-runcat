@@ -28,5 +28,8 @@
     <entry name="showCpuUsage" type="Bool">
       <default>false</default>
     </entry>
+    <entry name="reverseSpeed" type="Bool">
+      <default>false</default>
+    </entry>
   </group>
 </kcfg>

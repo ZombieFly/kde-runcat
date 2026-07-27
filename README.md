@@ -57,7 +57,8 @@ moving average prevents brief spikes from making the animation jitter. CPU
 sampling and frame animation use separate clocks, and the configured FPS limit
 caps rendering work at high load. The behavior settings can optionally show the
 current CPU percentage to the right of the cat; this display is disabled by
-default.
+default. They can also reverse the speed response so the cat runs faster at low
+CPU usage and slower at high CPU usage.
 
 Clicking the cat opens a Plasma dashboard with CPU, GPU, memory, disk, and
 network activity. The dashboard uses Kirigami and KQuickCharts so its colors,

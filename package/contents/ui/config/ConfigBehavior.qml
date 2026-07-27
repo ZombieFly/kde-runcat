@@ -22,6 +22,8 @@ KCM.SimpleKCM {
     property bool cfg_flipHorizontallyDefault
     property alias cfg_showCpuUsage: showCpuUsage.checked
     property bool cfg_showCpuUsageDefault
+    property alias cfg_reverseSpeed: reverseSpeed.checked
+    property bool cfg_reverseSpeedDefault
 
     Kirigami.FormLayout {
         CheckBox {
@@ -97,6 +99,18 @@ KCM.SimpleKCM {
         CheckBox {
             id: showCpuUsage
             text: i18n("Show CPU usage next to the cat")
+        }
+
+        CheckBox {
+            id: reverseSpeed
+            text: i18n("Reverse speed response to CPU usage")
+        }
+
+        Label {
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            text: i18n("When enabled, the cat runs faster at low CPU usage and slower at high CPU usage.")
+            opacity: 0.7
         }
     }
 }
