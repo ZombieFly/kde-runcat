@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls as QQC2
 import QtQuick.Effects
 import QtQuick.Layouts
 
@@ -37,6 +38,7 @@ PlasmoidItem {
     )
 
     property real smoothedCpu: 0
+    property real cpuUsage: 0
     property bool sensorReady: false
     property int frameIndex: 0
     property string cpuTemperatureSensorId: ""
@@ -50,6 +52,7 @@ PlasmoidItem {
         }
 
         const bounded = Animation.clamp(value, 0, 100);
+        cpuUsage = bounded;
         if (!sensorReady) {
             smoothedCpu = bounded;
             sensorReady = true;
@@ -117,18 +120,43 @@ PlasmoidItem {
     compactRepresentation: Item {
         id: representation
 
-        implicitWidth: root.vertical ? Kirigami.Units.iconSizes.medium : Math.round(implicitHeight * 14 / 9)
-        implicitHeight: root.vertical ? Math.round(implicitWidth * 9 / 14) : Kirigami.Units.iconSizes.medium
+        readonly property real catImplicitWidth: root.vertical
+            ? Kirigami.Units.iconSizes.medium
+            : Math.round(catImplicitHeight * 14 / 9)
+        readonly property real catImplicitHeight: root.vertical
+            ? Math.round(Kirigami.Units.iconSizes.medium * 9 / 14)
+            : Kirigami.Units.iconSizes.medium
+        readonly property real catMinimumWidth: root.vertical
+            ? Kirigami.Units.iconSizes.small
+            : Math.round(catMinimumHeight * 14 / 9)
+        readonly property real catMinimumHeight: root.vertical
+            ? Math.round(Kirigami.Units.iconSizes.small * 9 / 14)
+            : Kirigami.Units.iconSizes.small
+        readonly property real cpuLabelWidth: cpuLabelMetrics.advanceWidth
+        readonly property real labelSpacing: Plasmoid.configuration.showCpuUsage
+            ? Kirigami.Units.smallSpacing
+            : 0
 
-        Layout.minimumWidth: root.vertical ? Kirigami.Units.iconSizes.small : Math.round(Layout.minimumHeight * 14 / 9)
-        Layout.minimumHeight: root.vertical ? Math.round(Layout.minimumWidth * 9 / 14) : Kirigami.Units.iconSizes.small
+        implicitWidth: catImplicitWidth + labelSpacing
+            + (Plasmoid.configuration.showCpuUsage ? cpuLabelWidth : 0)
+        implicitHeight: catImplicitHeight
+
+        Layout.minimumWidth: catMinimumWidth + labelSpacing
+            + (Plasmoid.configuration.showCpuUsage ? cpuLabelWidth : 0)
+        Layout.minimumHeight: catMinimumHeight
         Layout.preferredWidth: implicitWidth
         Layout.preferredHeight: implicitHeight
 
         Item {
             id: frameContainer
 
-            anchors.fill: parent
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.right: Plasmoid.configuration.showCpuUsage
+                ? cpuLabel.left
+                : parent.right
+            anchors.rightMargin: representation.labelSpacing
             transform: Scale {
                 origin.x: frameContainer.width / 2
                 origin.y: frameContainer.height / 2
@@ -171,6 +199,26 @@ PlasmoidItem {
                     colorizationColor: Kirigami.Theme.textColor
                 }
             }
+        }
+
+        TextMetrics {
+            id: cpuLabelMetrics
+
+            font: cpuLabel.font
+            text: i18n("100%")
+        }
+
+        QQC2.Label {
+            id: cpuLabel
+
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            width: representation.cpuLabelWidth
+            horizontalAlignment: Text.AlignRight
+            text: root.sensorReady
+                ? i18n("%1%", Math.round(root.cpuUsage))
+                : i18n("--%")
+            visible: Plasmoid.configuration.showCpuUsage
         }
 
         MouseArea {

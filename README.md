@@ -55,7 +55,9 @@ installation or distribution.
 The CPU sensor is sampled at most once per second. An exponentially weighted
 moving average prevents brief spikes from making the animation jitter. CPU
 sampling and frame animation use separate clocks, and the configured FPS limit
-caps rendering work at high load.
+caps rendering work at high load. The behavior settings can optionally show the
+current CPU percentage to the right of the cat; this display is disabled by
+default.
 
 Clicking the cat opens a Plasma dashboard with CPU, GPU, memory, disk, and
 network activity. The dashboard uses Kirigami and KQuickCharts so its colors,

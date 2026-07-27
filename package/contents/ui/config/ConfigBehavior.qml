@@ -20,6 +20,8 @@ KCM.SimpleKCM {
     property int cfg_smoothingPercentDefault
     property alias cfg_flipHorizontally: flipHorizontally.checked
     property bool cfg_flipHorizontallyDefault
+    property alias cfg_showCpuUsage: showCpuUsage.checked
+    property bool cfg_showCpuUsageDefault
 
     Kirigami.FormLayout {
         CheckBox {
@@ -90,6 +92,11 @@ KCM.SimpleKCM {
         CheckBox {
             id: flipHorizontally
             text: i18n("Run in the opposite direction")
+        }
+
+        CheckBox {
+            id: showCpuUsage
+            text: i18n("Show CPU usage next to the cat")
         }
     }
 }
