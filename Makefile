@@ -12,9 +12,13 @@ check:
 	find $(PACKAGE_DIR)/contents/images -name '*.svg' -exec xmllint --noout {} +
 	$(QMLLINT) -I /usr/lib/qt6/qml \
 		$(PACKAGE_DIR)/contents/ui/main.qml \
+		$(PACKAGE_DIR)/contents/ui/Dashboard.qml \
+		$(PACKAGE_DIR)/contents/ui/MetricGauge.qml \
+		$(PACKAGE_DIR)/contents/ui/NetworkStats.qml \
 		$(PACKAGE_DIR)/contents/ui/config/ConfigBehavior.qml \
 		$(PACKAGE_DIR)/contents/config/config.qml \
-		tests/tst_animation.qml
+		tests/tst_animation.qml \
+		tests/tst_sensors.qml
 
 test:
 	QT_QPA_PLATFORM=offscreen $(QMLTESTRUNNER) \
@@ -39,7 +43,7 @@ run: install
 
 package: check test
 	mkdir -p $(BUILD_DIR)
-	cd $(PACKAGE_DIR) && zip -qr ../$(BUILD_DIR)/$(PACKAGE_ID).plasmoid .
+	cd $(PACKAGE_DIR) && zip -FSqr ../$(BUILD_DIR)/$(PACKAGE_ID).plasmoid .
 
 clean:
 	rm -f $(BUILD_DIR)/$(PACKAGE_ID).plasmoid

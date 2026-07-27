@@ -4,12 +4,14 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
 
+import org.kde.kitemmodels as KItemModels
 import org.kde.kirigami as Kirigami
 import org.kde.ksysguard.sensors as Sensors
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 
 import "../code/animation.js" as Animation
+import "../code/sensors.js" as SensorSelection
 
 PlasmoidItem {
     id: root
@@ -37,6 +39,9 @@ PlasmoidItem {
     property real smoothedCpu: 0
     property bool sensorReady: false
     property int frameIndex: 0
+    property string cpuTemperatureSensorId: ""
+    property string gpuUsageSensorId: ""
+    property string localIpv4SensorId: ""
 
     function updateCpu(rawValue) {
         const value = Number(rawValue);
@@ -58,6 +63,44 @@ PlasmoidItem {
         );
     }
 
+    function discoverOptionalSensors() {
+        const kinds = [
+            "cpuTemperature",
+            "gpuUsage",
+            "localIpv4"
+        ];
+        const bestIds = ["", "", ""];
+        const bestScores = [-1, -1, -1];
+
+        for (let row = 0; row < flatSensorModel.rowCount(); ++row) {
+            const index = flatSensorModel.index(row, 0);
+            const sensorId = String(flatSensorModel.data(
+                index,
+                Sensors.SensorTreeModel.SensorId
+            ) || "");
+            if (sensorId.length === 0) {
+                continue;
+            }
+            const name = String(flatSensorModel.data(index, Qt.DisplayRole) || "");
+
+            for (let kindIndex = 0; kindIndex < kinds.length; ++kindIndex) {
+                const score = SensorSelection.sensorScore(
+                    sensorId,
+                    name,
+                    kinds[kindIndex]
+                );
+                if (score > bestScores[kindIndex]) {
+                    bestScores[kindIndex] = score;
+                    bestIds[kindIndex] = sensorId;
+                }
+            }
+        }
+
+        cpuTemperatureSensorId = bestIds[0];
+        gpuUsageSensorId = bestIds[1];
+        localIpv4SensorId = bestIds[2];
+    }
+
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
     Plasmoid.title: i18n("RunCat")
     toolTipMainText: i18n("RunCat")
@@ -65,9 +108,13 @@ PlasmoidItem {
         ? i18n("CPU usage: %1%", Math.round(smoothedCpu))
         : i18n("Waiting for CPU data")
 
-    preferredRepresentation: fullRepresentation
+    activationTogglesExpanded: true
+    preloadFullRepresentation: true
+    preferredRepresentation: Plasmoid.formFactor === PlasmaCore.Types.Planar
+        ? fullRepresentation
+        : null
 
-    fullRepresentation: Item {
+    compactRepresentation: Item {
         id: representation
 
         implicitWidth: root.vertical ? Kirigami.Units.iconSizes.medium : Math.round(implicitHeight * 14 / 9)
@@ -125,7 +172,54 @@ PlasmoidItem {
                 }
             }
         }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: root.expanded = !root.expanded
+        }
     }
+
+    fullRepresentation: Dashboard {
+        cpuTemperatureSensorId: root.cpuTemperatureSensorId
+        gpuUsageSensorId: root.gpuUsageSensorId
+        localIpv4SensorId: root.localIpv4SensorId
+    }
+
+    Sensors.SensorTreeModel {
+        id: sensorTreeModel
+    }
+
+    KItemModels.KDescendantsProxyModel {
+        id: flatSensorModel
+
+        model: sensorTreeModel
+        expandsByDefault: true
+    }
+
+    Timer {
+        id: sensorDiscoveryTimer
+
+        interval: 100
+        onTriggered: root.discoverOptionalSensors()
+    }
+
+    Connections {
+        target: flatSensorModel
+
+        function onRowsInserted() {
+            sensorDiscoveryTimer.restart();
+        }
+
+        function onModelReset() {
+            sensorDiscoveryTimer.restart();
+        }
+
+        function onLayoutChanged() {
+            sensorDiscoveryTimer.restart();
+        }
+    }
+
+    Component.onCompleted: sensorDiscoveryTimer.start()
 
     Sensors.Sensor {
         id: cpuSensor

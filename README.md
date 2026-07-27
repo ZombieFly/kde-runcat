@@ -9,6 +9,7 @@ daemon is required.
 
 - KDE Plasma 6
 - `ksystemstats` and the `org.kde.ksysguard.sensors` QML module
+- KDE's KQuickCharts and KItemModels QML modules
 - `kpackagetool6`
 
 Arch Linux provides these through the `plasma-workspace`, `ksystemstats`, and
@@ -53,6 +54,12 @@ The CPU sensor is sampled at most once per second. An exponentially weighted
 moving average prevents brief spikes from making the animation jitter. CPU
 sampling and frame animation use separate clocks, and the configured FPS limit
 caps rendering work at high load.
+
+Clicking the cat opens a Plasma dashboard with CPU, GPU, memory, disk, and
+network activity. The dashboard uses Kirigami and KQuickCharts so its colors,
+fonts, and spacing follow the active Plasma theme. GPU and temperature sensors
+are discovered at runtime and are shown as unavailable when the hardware or
+driver does not expose them through `ksystemstats`.
 
 ## License
 
