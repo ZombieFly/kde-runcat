@@ -11,7 +11,8 @@ ColumnLayout {
 
     required property string localIpv4SensorId
 
-    spacing: Kirigami.Units.largeSpacing
+    // Keep all three two-line metrics visible in the shorter dashboard row.
+    spacing: Kirigami.Units.smallSpacing
 
     Sensors.Sensor {
         id: downloadSensor

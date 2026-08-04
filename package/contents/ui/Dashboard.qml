@@ -34,7 +34,12 @@ PlasmaExtras.Representation {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            height: Math.floor((parent.height - root.cardSpacing) / 2)
+            // The lower cards include an extra detail line, so give them a
+            // little more room than the gauge-only top row.
+            height: Math.floor(
+                (parent.height - root.cardSpacing) / 2
+                - Kirigami.Units.largeSpacing
+            )
 
             Kirigami.Card {
                 id: cpuCard
