@@ -17,7 +17,6 @@ Item {
     required property real cpuUsage
     required property real smoothedCpu
     required property bool sensorReady
-    required property string cpuTemperatureSensorId
     property bool vertical: false
     property real contentSpacing: Kirigami.Units.smallSpacing
     readonly property real resourceRingSize: Math.round(
@@ -44,8 +43,6 @@ Item {
             return runnerImplicitWidth
                 + (Boolean(componentSettings.showCpuUsage)
                     ? contentSpacing + cpuMetrics.advanceWidth : 0);
-        case "cpuTemperature":
-            return Math.round(availableHeight * 0.45);
         case "memory":
         case "disk":
             return componentLoader.item
@@ -81,7 +78,6 @@ Item {
         sourceComponent: {
             switch (root.componentType) {
             case "runner": return runnerComponent;
-            case "cpuTemperature": return cpuTemperatureComponent;
             case "memory": return memoryComponent;
             case "disk": return diskComponent;
             case "network": return networkComponent;
@@ -210,14 +206,6 @@ Item {
                     horizontalAlignment: Text.AlignRight
                 }
             }
-        }
-    }
-
-    Component {
-        id: cpuTemperatureComponent
-
-        CpuTemperature {
-            sensorId: root.cpuTemperatureSensorId
         }
     }
 

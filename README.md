@@ -44,8 +44,8 @@ make reload
 ## Components
 
 New installations start with only the Runner. The widget settings can add,
-remove, configure, and reorder temperature, memory, disk, network, and AI
-indicators. AI usage is read locally from Codex and Claude Code session logs;
+remove, configure, and reorder memory, disk, network, and AI indicators. AI
+usage is read locally from Codex and Claude Code session logs;
 no credentials or prompts are sent anywhere.
 
 ## Development

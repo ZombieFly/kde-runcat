@@ -33,8 +33,6 @@ KCM.ScrollViewKCM {
     property bool cfg_flipHorizontallyDefault
     property bool cfg_showCpuUsage
     property bool cfg_showCpuUsageDefault
-    property bool cfg_showCpuTemperature
-    property bool cfg_showCpuTemperatureDefault
     property bool cfg_showMemoryUsage
     property bool cfg_showMemoryUsageDefault
     property bool cfg_showDiskUsage
@@ -61,7 +59,6 @@ KCM.ScrollViewKCM {
     function titleFor(type) {
         switch (type) {
         case "runner": return i18n("Runner");
-        case "cpuTemperature": return i18n("CPU temperature");
         case "memory": return i18n("Memory usage");
         case "disk": return i18n("Disk usage");
         case "network": return i18n("Network rate");
@@ -73,7 +70,6 @@ KCM.ScrollViewKCM {
     function descriptionFor(type) {
         switch (type) {
         case "runner": return i18n("Animated runner driven by CPU load");
-        case "cpuTemperature": return i18n("Detected CPU temperature sensor");
         case "memory": return i18n("Physical memory usage ring");
         case "disk": return i18n("Combined disk usage ring");
         case "network": return i18n("Download and upload rates");
@@ -85,7 +81,6 @@ KCM.ScrollViewKCM {
     function iconFor(type) {
         switch (type) {
         case "runner": return "run-build";
-        case "cpuTemperature": return "temperature-symbolic";
         case "memory": return "media-flash-symbolic";
         case "disk": return "drive-harddisk-symbolic";
         case "network": return "network-wired-symbolic";
@@ -115,7 +110,6 @@ KCM.ScrollViewKCM {
                 flipHorizontally: cfg_flipHorizontally,
                 reverseSpeed: cfg_reverseSpeed,
                 showCpuUsage: cfg_showCpuUsage,
-                showCpuTemperature: cfg_showCpuTemperature,
                 showMemoryUsage: cfg_showMemoryUsage,
                 showDiskUsage: cfg_showDiskUsage,
                 showNetworkRate: cfg_showNetworkRate,
@@ -140,8 +134,8 @@ KCM.ScrollViewKCM {
         if (cfg_components !== serialized) {
             cfg_components = serialized;
         }
-        if (cfg_componentConfigVersion !== 2) {
-            cfg_componentConfigVersion = 2;
+        if (cfg_componentConfigVersion !== 3) {
+            cfg_componentConfigVersion = 3;
         }
     }
 
@@ -185,8 +179,8 @@ KCM.ScrollViewKCM {
         if (cfg_components !== serialized) {
             cfg_components = serialized;
         }
-        if (cfg_componentConfigVersion !== 2) {
-            cfg_componentConfigVersion = 2;
+        if (cfg_componentConfigVersion !== 3) {
+            cfg_componentConfigVersion = 3;
         }
     }
 

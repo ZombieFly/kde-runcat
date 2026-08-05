@@ -91,7 +91,7 @@ TestCase {
             flipHorizontally: true,
             reverseSpeed: true,
             showCpuUsage: true,
-            showCpuTemperature: false,
+            showCpuTemperature: true,
             showMemoryUsage: true,
             showDiskUsage: false,
             showNetworkRate: true,
@@ -117,5 +117,16 @@ TestCase {
         const value = Components.normalize("not json");
         compare(value.length, 1);
         compare(value[0].type, "runner");
+    }
+
+    function test_normalize_removes_temperature_component() {
+        const value = Components.normalize([
+            {type: "runner", settings: {}},
+            {type: "cpuTemperature", settings: {}},
+            {type: "memory", settings: {}}
+        ]);
+        compare(value.length, 2);
+        compare(value[0].type, "runner");
+        compare(value[1].type, "memory");
     }
 }

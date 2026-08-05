@@ -25,7 +25,6 @@ TestCase {
             cpuUsage: 42
             smoothedCpu: 42
             sensorReady: true
-            cpuTemperatureSensorId: ""
             height: 32
         }
     }
@@ -39,7 +38,6 @@ TestCase {
             cpuUsage: 0
             smoothedCpu: 0
             sensorReady: true
-            cpuTemperatureSensorId: ""
             height: 64
         }
     }
@@ -53,7 +51,6 @@ TestCase {
             cpuUsage: 42
             smoothedCpu: 42
             sensorReady: true
-            cpuTemperatureSensorId: ""
             height: 32
         }
     }
@@ -67,7 +64,6 @@ TestCase {
             cpuUsage: 0
             smoothedCpu: 0
             sensorReady: true
-            cpuTemperatureSensorId: ""
             height: 32
         }
     }
@@ -81,7 +77,6 @@ TestCase {
             cpuUsage: 0
             smoothedCpu: 0
             sensorReady: true
-            cpuTemperatureSensorId: ""
             height: 32
         }
     }

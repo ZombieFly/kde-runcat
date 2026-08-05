@@ -14,7 +14,6 @@ check:
 		$(PACKAGE_DIR)/contents/ui/main.qml \
 		$(PACKAGE_DIR)/contents/ui/PanelComponent.qml \
 		$(PACKAGE_DIR)/contents/ui/ResourceRing.qml \
-		$(PACKAGE_DIR)/contents/ui/CpuTemperature.qml \
 		$(PACKAGE_DIR)/contents/ui/NetworkRate.qml \
 		$(PACKAGE_DIR)/contents/ui/TokenUsage.qml \
 		$(PACKAGE_DIR)/contents/ui/TokenRing.qml \
@@ -23,8 +22,7 @@ check:
 		tests/tst_animation.qml \
 		tests/tst_components.qml \
 		tests/tst_panel_component.qml \
-		tests/tst_runners.qml \
-		tests/tst_sensors.qml
+		tests/tst_runners.qml
 	PYTHONPYCACHEPREFIX=/tmp/kde-runcat-pycache \
 		python3 -m py_compile $(PACKAGE_DIR)/contents/code/token_usage.py
 

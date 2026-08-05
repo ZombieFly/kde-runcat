@@ -1,6 +1,5 @@
 const componentTypes = [
     "runner",
-    "cpuTemperature",
     "memory",
     "disk",
     "network",
@@ -179,9 +178,6 @@ function migrateLegacy(configuration) {
         reverseSpeed: configuration.reverseSpeed,
         showCpuUsage: configuration.showCpuUsage
     })];
-    if (configuration.showCpuTemperature) {
-        result.push(definition("cpuTemperature", {}));
-    }
     if (configuration.showMemoryUsage) {
         result.push(definition("memory", {}));
     }
