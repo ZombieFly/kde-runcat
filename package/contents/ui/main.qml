@@ -22,6 +22,8 @@ PlasmoidItem {
     readonly property int defaultFastCycleMs: 150
     readonly property int defaultMaxFps: 30
     readonly property real defaultSmoothing: 0.4
+    readonly property color memoryPieColor: "#3daee9"
+    readonly property color diskPieColor: "#27ae60"
     readonly property string runnerId: RunnerSelection.normalizeRunnerId(
         Plasmoid.configuration.runner
     )
@@ -148,16 +150,51 @@ PlasmoidItem {
             ? Math.round(Kirigami.Units.iconSizes.small / root.runnerAspectRatio)
             : Kirigami.Units.iconSizes.small
         readonly property real cpuLabelWidth: cpuLabelMetrics.advanceWidth
-        readonly property real labelSpacing: Plasmoid.configuration.showCpuUsage
+        readonly property int indicatorCount:
+            (Plasmoid.configuration.showMemoryUsage ? 1 : 0)
+            + (Plasmoid.configuration.showDiskUsage ? 1 : 0)
+            + (Plasmoid.configuration.showCpuUsage ? 1 : 0)
+            + (networkRate.visible ? 1 : 0)
+        readonly property real usagePieImplicitSize: Math.round(
+            runnerImplicitHeight * 0.9
+        )
+        readonly property real usagePieMinimumSize: Math.round(
+            runnerMinimumHeight * 0.9
+        )
+        readonly property real usagePieSize: Math.round(
+            Math.min(height, runnerImplicitHeight) * 0.9
+        )
+        readonly property real indicatorSpacing: indicatorCount > 1
             ? Kirigami.Units.smallSpacing
             : 0
-
-        implicitWidth: runnerImplicitWidth + labelSpacing
+        readonly property real contentSpacing: indicatorCount > 0
+            ? Kirigami.Units.smallSpacing
+            : 0
+        readonly property real indicatorImplicitWidth:
+            (Plasmoid.configuration.showMemoryUsage ? usagePieImplicitSize : 0)
+            + (Plasmoid.configuration.showDiskUsage ? usagePieImplicitSize : 0)
             + (Plasmoid.configuration.showCpuUsage ? cpuLabelWidth : 0)
+            + (networkRate.visible ? networkRate.implicitWidth : 0)
+            + Math.max(0, indicatorCount - 1) * indicatorSpacing
+        readonly property real indicatorMinimumWidth:
+            (Plasmoid.configuration.showMemoryUsage ? usagePieMinimumSize : 0)
+            + (Plasmoid.configuration.showDiskUsage ? usagePieMinimumSize : 0)
+            + (Plasmoid.configuration.showCpuUsage ? cpuLabelWidth : 0)
+            + (networkRate.visible ? networkRate.implicitWidth : 0)
+            + Math.max(0, indicatorCount - 1) * indicatorSpacing
+        readonly property real indicatorWidth:
+            (Plasmoid.configuration.showMemoryUsage ? usagePieSize : 0)
+            + (Plasmoid.configuration.showDiskUsage ? usagePieSize : 0)
+            + (Plasmoid.configuration.showCpuUsage ? cpuLabelWidth : 0)
+            + (networkRate.visible ? networkRate.implicitWidth : 0)
+            + Math.max(0, indicatorCount - 1) * indicatorSpacing
+
+        implicitWidth: runnerImplicitWidth + contentSpacing
+            + indicatorImplicitWidth
         implicitHeight: runnerImplicitHeight
 
-        Layout.minimumWidth: runnerMinimumWidth + labelSpacing
-            + (Plasmoid.configuration.showCpuUsage ? cpuLabelWidth : 0)
+        Layout.minimumWidth: runnerMinimumWidth + contentSpacing
+            + indicatorMinimumWidth
         Layout.minimumHeight: runnerMinimumHeight
         Layout.preferredWidth: implicitWidth
         Layout.preferredHeight: implicitHeight
@@ -168,10 +205,10 @@ PlasmoidItem {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            anchors.right: Plasmoid.configuration.showCpuUsage
-                ? cpuLabel.left
+            anchors.right: representation.indicatorCount > 0
+                ? indicators.left
                 : parent.right
-            anchors.rightMargin: representation.labelSpacing
+            anchors.rightMargin: representation.contentSpacing
             transform: Scale {
                 origin.x: frameContainer.width / 2
                 origin.y: frameContainer.height / 2
@@ -223,17 +260,56 @@ PlasmoidItem {
             text: i18n("100%")
         }
 
-        QQC2.Label {
-            id: cpuLabel
+        Row {
+            id: indicators
 
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            width: representation.cpuLabelWidth
-            horizontalAlignment: Text.AlignRight
-            text: root.sensorReady
-                ? i18n("%1%", Math.round(root.cpuUsage))
-                : i18n("--%")
-            visible: Plasmoid.configuration.showCpuUsage
+            width: representation.indicatorWidth
+            height: parent.height
+            spacing: representation.indicatorSpacing
+            visible: representation.indicatorCount > 0
+
+            QQC2.Label {
+                id: cpuLabel
+
+                width: representation.cpuLabelWidth
+                height: parent.height
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignRight
+                text: root.sensorReady
+                    ? i18n("%1%", Math.round(root.cpuUsage))
+                    : i18n("--%")
+                visible: Plasmoid.configuration.showCpuUsage
+            }
+
+            UsagePie {
+                width: representation.usagePieSize
+                height: width
+                anchors.verticalCenter: parent.verticalCenter
+                title: i18n("Memory")
+                sensorId: "memory/physical/usedPercent"
+                color: root.memoryPieColor
+                visible: Plasmoid.configuration.showMemoryUsage
+            }
+
+            UsagePie {
+                width: representation.usagePieSize
+                height: width
+                anchors.verticalCenter: parent.verticalCenter
+                title: i18n("Disk")
+                sensorId: "disk/all/usedPercent"
+                color: root.diskPieColor
+                visible: Plasmoid.configuration.showDiskUsage
+            }
+
+            NetworkRate {
+                id: networkRate
+
+                width: implicitWidth
+                height: parent.height
+                visible: Plasmoid.configuration.showNetworkRate && fits
+            }
         }
 
         MouseArea {

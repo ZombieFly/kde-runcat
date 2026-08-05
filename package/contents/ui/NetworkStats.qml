@@ -79,7 +79,7 @@ ColumnLayout {
 
         Kirigami.Icon {
             source: "arrow-down"
-            color: Kirigami.Theme.highlightColor
+            color: "#00bcd4"
             implicitWidth: Kirigami.Units.iconSizes.smallMedium
             implicitHeight: implicitWidth
         }
@@ -111,7 +111,7 @@ ColumnLayout {
 
         Kirigami.Icon {
             source: "arrow-up"
-            color: Kirigami.Theme.positiveTextColor
+            color: "#9b59b6"
             implicitWidth: Kirigami.Units.iconSizes.smallMedium
             implicitHeight: implicitWidth
         }

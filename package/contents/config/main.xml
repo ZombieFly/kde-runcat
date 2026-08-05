@@ -22,6 +22,15 @@
     <entry name="showCpuUsage" type="Bool">
       <default>false</default>
     </entry>
+    <entry name="showMemoryUsage" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showDiskUsage" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showNetworkRate" type="Bool">
+      <default>false</default>
+    </entry>
     <entry name="reverseSpeed" type="Bool">
       <default>false</default>
     </entry>

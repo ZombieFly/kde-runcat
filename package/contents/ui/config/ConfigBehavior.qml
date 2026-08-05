@@ -24,6 +24,12 @@ KCM.SimpleKCM {
     property bool cfg_flipHorizontallyDefault
     property alias cfg_showCpuUsage: showCpuUsage.checked
     property bool cfg_showCpuUsageDefault
+    property alias cfg_showMemoryUsage: showMemoryUsage.checked
+    property bool cfg_showMemoryUsageDefault
+    property alias cfg_showDiskUsage: showDiskUsage.checked
+    property bool cfg_showDiskUsageDefault
+    property alias cfg_showNetworkRate: showNetworkRate.checked
+    property bool cfg_showNetworkRateDefault
     property alias cfg_reverseSpeed: reverseSpeed.checked
     property bool cfg_reverseSpeedDefault
 
@@ -83,6 +89,21 @@ KCM.SimpleKCM {
         CheckBox {
             id: showCpuUsage
             text: i18n("Show CPU usage next to the runner")
+        }
+
+        CheckBox {
+            id: showMemoryUsage
+            text: i18n("Show memory usage pie next to the runner")
+        }
+
+        CheckBox {
+            id: showDiskUsage
+            text: i18n("Show disk usage pie next to the runner")
+        }
+
+        CheckBox {
+            id: showNetworkRate
+            text: i18n("Show network rate next to the runner")
         }
 
         CheckBox {

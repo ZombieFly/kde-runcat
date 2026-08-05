@@ -137,7 +137,7 @@ PlasmaExtras.Representation {
                     sensorId: "memory/physical/usedPercent"
                     detailSensorId: "memory/physical/used"
                     detailTotalSensorId: "memory/physical/total"
-                    color: Kirigami.Theme.highlightColor
+                    color: "#3daee9"
                 }
             }
 
@@ -162,7 +162,7 @@ PlasmaExtras.Representation {
                     sensorId: "disk/all/usedPercent"
                     detailSensorId: "disk/all/used"
                     detailTotalSensorId: "disk/all/total"
-                    color: Kirigami.Theme.positiveTextColor
+                    color: "#27ae60"
                 }
             }
 
