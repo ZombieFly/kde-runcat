@@ -43,15 +43,29 @@ make reload
 
 ## Components
 
-New installations start with only the Runner. The widget settings can add,
-remove, configure, and reorder memory, disk, network, Codex usage, and Claude
-Code usage independently. Codex and Claude Code usage is read locally from
-their session logs; no credentials or prompts are sent anywhere. Each token
-usage ring can optionally show the current context tokens on the first line and
-today's total tokens on a subdued second line.
+New installations start with only the Runner. Every component can be added,
+removed, configured, and reordered independently:
 
-The Runner can optionally show CPU usage and a color-coded CPU temperature in
-Celsius or Fahrenheit.
+- **Runner** — An animated character whose speed follows total CPU usage. It
+  can optionally show the current CPU usage percentage and CPU temperature in
+  Celsius or Fahrenheit; elevated temperatures are color-coded.
+- **Memory usage** — The ring shows the percentage of physical memory in use.
+  Optional text shows used memory on the first line and total memory on the
+  second line.
+- **Disk usage** — The ring shows the percentage of combined disk capacity in
+  use. Optional text shows used capacity on the first line and total capacity
+  on the second line.
+- **Network rate** — Shows the current aggregate download rate on the first
+  line and upload rate on the second line.
+- **Codex usage** — The ring shows current context tokens as a percentage of
+  the context window. Optional text shows current context tokens on the first
+  line and today's total tokens on the second line.
+- **Claude Code usage** — Like Codex usage, the ring represents current context
+  consumption, with an independently configurable context-window size.
+  Optional text shows current context tokens followed by today's total tokens.
+
+Codex and Claude Code usage is read locally from their session logs. No
+credentials or prompt contents are sent anywhere.
 
 ## Development
 
