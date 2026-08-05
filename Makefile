@@ -14,6 +14,7 @@ check:
 		$(PACKAGE_DIR)/contents/ui/main.qml \
 		$(PACKAGE_DIR)/contents/ui/Dashboard.qml \
 		$(PACKAGE_DIR)/contents/ui/MetricGauge.qml \
+		$(PACKAGE_DIR)/contents/ui/CpuTemperature.qml \
 		$(PACKAGE_DIR)/contents/ui/UsagePie.qml \
 		$(PACKAGE_DIR)/contents/ui/NetworkRate.qml \
 		$(PACKAGE_DIR)/contents/ui/NetworkStats.qml \

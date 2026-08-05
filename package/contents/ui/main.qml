@@ -154,6 +154,7 @@ PlasmoidItem {
             (Plasmoid.configuration.showMemoryUsage ? 1 : 0)
             + (Plasmoid.configuration.showDiskUsage ? 1 : 0)
             + (Plasmoid.configuration.showCpuUsage ? 1 : 0)
+            + (Plasmoid.configuration.showCpuTemperature ? 1 : 0)
             + (networkRate.visible ? 1 : 0)
         readonly property real usagePieImplicitSize: Math.round(
             runnerImplicitHeight * 0.9
@@ -163,6 +164,15 @@ PlasmoidItem {
         )
         readonly property real usagePieSize: Math.round(
             Math.min(height, runnerImplicitHeight) * 0.9
+        )
+        readonly property real temperatureImplicitWidth: Math.round(
+            usagePieImplicitSize * 0.45
+        )
+        readonly property real temperatureMinimumWidth: Math.round(
+            usagePieMinimumSize * 0.45
+        )
+        readonly property real temperatureWidth: Math.round(
+            usagePieSize * 0.45
         )
         readonly property real componentSpacing: Math.max(
             0,
@@ -178,18 +188,24 @@ PlasmoidItem {
             (Plasmoid.configuration.showMemoryUsage ? usagePieImplicitSize : 0)
             + (Plasmoid.configuration.showDiskUsage ? usagePieImplicitSize : 0)
             + (Plasmoid.configuration.showCpuUsage ? cpuLabelWidth : 0)
+            + (Plasmoid.configuration.showCpuTemperature
+                ? temperatureImplicitWidth : 0)
             + (networkRate.visible ? networkRate.implicitWidth : 0)
             + Math.max(0, indicatorCount - 1) * indicatorSpacing
         readonly property real indicatorMinimumWidth:
             (Plasmoid.configuration.showMemoryUsage ? usagePieMinimumSize : 0)
             + (Plasmoid.configuration.showDiskUsage ? usagePieMinimumSize : 0)
             + (Plasmoid.configuration.showCpuUsage ? cpuLabelWidth : 0)
+            + (Plasmoid.configuration.showCpuTemperature
+                ? temperatureMinimumWidth : 0)
             + (networkRate.visible ? networkRate.implicitWidth : 0)
             + Math.max(0, indicatorCount - 1) * indicatorSpacing
         readonly property real indicatorWidth:
             (Plasmoid.configuration.showMemoryUsage ? usagePieSize : 0)
             + (Plasmoid.configuration.showDiskUsage ? usagePieSize : 0)
             + (Plasmoid.configuration.showCpuUsage ? cpuLabelWidth : 0)
+            + (Plasmoid.configuration.showCpuTemperature
+                ? temperatureWidth : 0)
             + (networkRate.visible ? networkRate.implicitWidth : 0)
             + Math.max(0, indicatorCount - 1) * indicatorSpacing
 
@@ -285,6 +301,14 @@ PlasmoidItem {
                     ? i18n("%1%", Math.round(root.cpuUsage))
                     : i18n("--%")
                 visible: Plasmoid.configuration.showCpuUsage
+            }
+
+            CpuTemperature {
+                width: representation.temperatureWidth
+                height: representation.usagePieSize
+                anchors.verticalCenter: parent.verticalCenter
+                sensorId: root.cpuTemperatureSensorId
+                visible: Plasmoid.configuration.showCpuTemperature
             }
 
             UsagePie {

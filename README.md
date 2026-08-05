@@ -56,9 +56,9 @@ installation or distribution.
 
 RunCat samples Plasma system-monitor sensors without a background daemon and
 smooths CPU data to keep animation stable. Behavior settings control the runner,
-speed response, and optional panel indicators for CPU, memory, disk, and network
-activity. Clicking the runner opens the full system dashboard; unavailable
-hardware sensors are handled automatically.
+speed response, and optional panel indicators for CPU usage and temperature,
+memory, disk, and network activity. Clicking the runner opens the full system
+dashboard; unavailable hardware sensors are handled automatically.
 
 ## License
 

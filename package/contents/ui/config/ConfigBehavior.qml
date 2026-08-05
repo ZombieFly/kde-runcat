@@ -24,6 +24,8 @@ KCM.SimpleKCM {
     property bool cfg_flipHorizontallyDefault
     property alias cfg_showCpuUsage: showCpuUsage.checked
     property bool cfg_showCpuUsageDefault
+    property alias cfg_showCpuTemperature: showCpuTemperature.checked
+    property bool cfg_showCpuTemperatureDefault
     property alias cfg_showMemoryUsage: showMemoryUsage.checked
     property bool cfg_showMemoryUsageDefault
     property alias cfg_showDiskUsage: showDiskUsage.checked
@@ -91,6 +93,11 @@ KCM.SimpleKCM {
         CheckBox {
             id: showCpuUsage
             text: i18n("Show CPU usage next to the runner")
+        }
+
+        CheckBox {
+            id: showCpuTemperature
+            text: i18n("Show CPU temperature next to the runner")
         }
 
         CheckBox {

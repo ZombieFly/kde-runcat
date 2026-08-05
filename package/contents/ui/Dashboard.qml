@@ -77,7 +77,7 @@ PlasmaExtras.Representation {
                         title: i18n("Temperature")
                         sensorId: root.cpuTemperatureSensorId
                         maximumValue: 100
-                        color: Kirigami.Theme.neutralTextColor
+                        color: "#f67400"
                     }
                 }
             }
