@@ -60,6 +60,18 @@ speed response, and optional panel indicators for CPU usage and temperature,
 memory, disk, and network activity. Clicking the runner opens the full system
 dashboard; unavailable hardware sensors are handled automatically.
 
+### Changelog
+
+Every feature and bug fix must include a short entry under `Unreleased` in
+`CHANGELOG.md`.
+
+### Releasing a new version
+
+1. Update the version in `package/metadata.json`.
+2. In `CHANGELOG.md`, rename `Unreleased` to the new version and release date,
+   then add a new empty `Unreleased` section above it.
+3. Commit the release changes with `chore: release x.y.z`.
+
 ## License
 
 The implementation is licensed under the Apache License 2.0. The bundled runner
