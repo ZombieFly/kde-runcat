@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-05
+
 ### Added
 
 - Optional memory and disk usage pies beside the runner.
@@ -48,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Automatic discovery of optional GPU and CPU temperature sensors.
 - Packaging, automated release workflow, tests, documentation, and licensing.
 
-[Unreleased]: https://github.com/fioncat/kde-runcat/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/fioncat/kde-runcat/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/fioncat/kde-runcat/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/fioncat/kde-runcat/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/fioncat/kde-runcat/releases/tag/v0.1.0
