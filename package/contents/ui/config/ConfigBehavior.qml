@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -5,176 +7,553 @@ import QtQuick.Layouts
 import org.kde.kcmutils as KCM
 import org.kde.kirigami as Kirigami
 
+import "../../code/components.js" as Components
 import "../../code/runners.js" as RunnerSelection
 
-KCM.SimpleKCM {
-    id: behavior
+// This is a list-based settings page. ScrollViewKCM gives the ListView one
+// bounded viewport and keeps the controls below it in a separate footer.
+KCM.ScrollViewKCM {
+    id: root
 
-    readonly property var runnerIds: RunnerSelection.availableRunnerIds()
+    property string cfg_components
+    property string cfg_componentsDefault
+    property int cfg_componentConfigVersion
+    property int cfg_componentConfigVersionDefault
 
-    property alias cfg_useIdleFrame: useIdleFrame.checked
+    // Kept while upgrading existing installations to the component model.
+    property bool cfg_useIdleFrame
     property bool cfg_useIdleFrameDefault
-    property alias cfg_idleThreshold: idleThreshold.value
+    property int cfg_idleThreshold
     property int cfg_idleThresholdDefault
     property string cfg_runner
     property string cfg_runnerDefault
-    property alias cfg_speedPercent: speedPercent.value
+    property int cfg_speedPercent
     property int cfg_speedPercentDefault
-    property alias cfg_flipHorizontally: flipHorizontally.checked
+    property bool cfg_flipHorizontally
     property bool cfg_flipHorizontallyDefault
-    property alias cfg_showCpuUsage: showCpuUsage.checked
+    property bool cfg_showCpuUsage
     property bool cfg_showCpuUsageDefault
-    property alias cfg_showCpuTemperature: showCpuTemperature.checked
+    property bool cfg_showCpuTemperature
     property bool cfg_showCpuTemperatureDefault
-    property alias cfg_showMemoryUsage: showMemoryUsage.checked
+    property bool cfg_showMemoryUsage
     property bool cfg_showMemoryUsageDefault
-    property alias cfg_showDiskUsage: showDiskUsage.checked
+    property bool cfg_showDiskUsage
     property bool cfg_showDiskUsageDefault
-    property alias cfg_showNetworkRate: showNetworkRate.checked
+    property bool cfg_showNetworkRate
     property bool cfg_showNetworkRateDefault
-    property alias cfg_showCodexTokenUsage: showCodexTokenUsage.checked
+    property bool cfg_showCodexTokenUsage
     property bool cfg_showCodexTokenUsageDefault
-    property alias cfg_showClaudeTokenUsage: showClaudeTokenUsage.checked
+    property bool cfg_showClaudeTokenUsage
     property bool cfg_showClaudeTokenUsageDefault
-    property alias cfg_showDailyTokenUsage: showDailyTokenUsage.checked
+    property bool cfg_showDailyTokenUsage
     property bool cfg_showDailyTokenUsageDefault
-    property alias cfg_claudeContextWindow: claudeContextWindow.value
+    property int cfg_claudeContextWindow
     property int cfg_claudeContextWindowDefault
-    property alias cfg_indicatorSpacing: indicatorSpacing.value
+    property int cfg_indicatorSpacing
     property int cfg_indicatorSpacingDefault
-    property alias cfg_reverseSpeed: reverseSpeed.checked
+    property bool cfg_reverseSpeed
     property bool cfg_reverseSpeedDefault
 
-    Kirigami.FormLayout {
-        CheckBox {
-            id: useIdleFrame
-            text: i18n("Rest when the system is idle")
+    readonly property var runnerIds: RunnerSelection.availableRunnerIds()
+    property int draggedIndex: -1
+    property bool initializing: true
+
+    function titleFor(type) {
+        switch (type) {
+        case "runner": return i18n("Runner");
+        case "cpuTemperature": return i18n("CPU temperature");
+        case "memory": return i18n("Memory usage");
+        case "disk": return i18n("Disk usage");
+        case "network": return i18n("Network rate");
+        case "ai": return i18n("AI usage");
         }
+        return type;
+    }
 
-        SpinBox {
-            id: idleThreshold
-            from: 0
-            to: 25
-            stepSize: 1
-            enabled: useIdleFrame.checked
-            Kirigami.FormData.label: i18n("Idle threshold:")
-            textFromValue: function(value) { return i18n("%1%", value); }
-            valueFromText: function(text) { return parseInt(text, 10); }
+    function descriptionFor(type) {
+        switch (type) {
+        case "runner": return i18n("Animated runner driven by CPU load");
+        case "cpuTemperature": return i18n("Detected CPU temperature sensor");
+        case "memory": return i18n("Physical memory usage ring");
+        case "disk": return i18n("Combined disk usage ring");
+        case "network": return i18n("Download and upload rates");
+        case "ai": return i18n("Codex and Claude Code context and daily tokens");
         }
+        return "";
+    }
 
-        ComboBox {
-            id: runner
-
-            model: [
-                i18n("Cat"),
-                i18n("Dog"),
-                i18n("Slime"),
-                i18n("Drop"),
-                i18n("Coffee"),
-                i18n("Newton's cradle"),
-                i18n("Engine"),
-                i18n("Mochi")
-            ]
-            currentIndex: Math.max(
-                0,
-                behavior.runnerIds.indexOf(behavior.cfg_runner)
-            )
-            Kirigami.FormData.label: i18n("Runner:")
-            onActivated: behavior.cfg_runner = behavior.runnerIds[currentIndex]
+    function iconFor(type) {
+        switch (type) {
+        case "runner": return "run-build";
+        case "cpuTemperature": return "temperature-symbolic";
+        case "memory": return "media-flash-symbolic";
+        case "disk": return "drive-harddisk-symbolic";
+        case "network": return "network-wired-symbolic";
+        case "ai": return "applications-science-symbolic";
         }
+        return "widget-alternatives";
+    }
 
-        SpinBox {
-            id: speedPercent
-            from: 25
-            to: 200
-            stepSize: 25
-            Kirigami.FormData.label: i18n("Running speed:")
-            textFromValue: function(value) { return i18n("%1%", value); }
-            valueFromText: function(text) { return parseInt(text, 10); }
-        }
-
-        CheckBox {
-            id: flipHorizontally
-            text: i18n("Flip runner horizontally")
-        }
-
-        CheckBox {
-            id: showCpuUsage
-            text: i18n("Show CPU usage next to the runner")
-        }
-
-        CheckBox {
-            id: showCpuTemperature
-            text: i18n("Show CPU temperature next to the runner")
-        }
-
-        CheckBox {
-            id: showMemoryUsage
-            text: i18n("Show memory usage pie next to the runner")
-        }
-
-        CheckBox {
-            id: showDiskUsage
-            text: i18n("Show disk usage pie next to the runner")
-        }
-
-        CheckBox {
-            id: showNetworkRate
-            text: i18n("Show network rate next to the runner")
-        }
-
-        CheckBox {
-            id: showCodexTokenUsage
-            text: i18n("Show Codex context ring")
-        }
-
-        CheckBox {
-            id: showClaudeTokenUsage
-            text: i18n("Show Claude Code context ring")
-        }
-
-        CheckBox {
-            id: showDailyTokenUsage
-            text: i18n("Show today's Codex and Claude Code token usage")
-        }
-
-        SpinBox {
-            id: claudeContextWindow
-
-            from: 10000
-            to: 2000000
-            stepSize: 10000
-            enabled: showClaudeTokenUsage.checked
-            Kirigami.FormData.label: i18n("Claude context window:")
-            textFromValue: function(value) {
-                return i18n("%1K tokens", Math.round(value / 1000));
-            }
-            valueFromText: function(text) {
-                return Math.max(10000, parseInt(text, 10) * 1000);
+    function containsType(type) {
+        for (let index = 0; index < componentModel.count; ++index) {
+            if (componentModel.get(index).componentType === type) {
+                return true;
             }
         }
+        return false;
+    }
 
-        SpinBox {
-            id: indicatorSpacing
-
-            from: 0
-            to: 24
-            stepSize: 1
-            Kirigami.FormData.label: i18n("Indicator spacing:")
-            textFromValue: function(value) { return i18n("%1 px", value); }
-            valueFromText: function(text) { return parseInt(text, 10); }
+    function loadModel() {
+        let value;
+        const migratingLegacy = cfg_componentConfigVersion < 1;
+        if (migratingLegacy) {
+            value = Components.migrateLegacy({
+                runner: cfg_runner,
+                useIdleFrame: cfg_useIdleFrame,
+                idleThreshold: cfg_idleThreshold,
+                speedPercent: cfg_speedPercent,
+                flipHorizontally: cfg_flipHorizontally,
+                reverseSpeed: cfg_reverseSpeed,
+                showCpuUsage: cfg_showCpuUsage,
+                showCpuTemperature: cfg_showCpuTemperature,
+                showMemoryUsage: cfg_showMemoryUsage,
+                showDiskUsage: cfg_showDiskUsage,
+                showNetworkRate: cfg_showNetworkRate,
+                showCodexTokenUsage: cfg_showCodexTokenUsage,
+                showClaudeTokenUsage: cfg_showClaudeTokenUsage,
+                showDailyTokenUsage: cfg_showDailyTokenUsage,
+                claudeContextWindow: cfg_claudeContextWindow
+            });
+        } else {
+            value = Components.normalize(cfg_components);
         }
+        const serialized = Components.serialize(value);
 
-        CheckBox {
-            id: reverseSpeed
-            text: i18n("Reverse speed response to CPU usage")
+        componentModel.clear();
+        for (let index = 0; index < value.length; ++index) {
+            componentModel.append({
+                componentType: value[index].type,
+                settingsJson: JSON.stringify(value[index].settings)
+            });
         }
+        initializing = false;
+        if (cfg_components !== serialized) {
+            cfg_components = serialized;
+        }
+        if (cfg_componentConfigVersion !== 2) {
+            cfg_componentConfigVersion = 2;
+        }
+    }
 
-        Label {
-            Layout.fillWidth: true
-            wrapMode: Text.WordWrap
-            text: i18n("When enabled, the runner moves faster at low CPU usage and slower at high CPU usage.")
-            opacity: 0.7
+    function replaceModel(value) {
+        const serialized = Components.serialize(value);
+        if (serialized === modelJson()) {
+            return;
         }
+        initializing = true;
+        const components = Components.normalize(serialized);
+        componentModel.clear();
+        for (let index = 0; index < components.length; ++index) {
+            componentModel.append({
+                componentType: components[index].type,
+                settingsJson: JSON.stringify(components[index].settings)
+            });
+        }
+        initializing = false;
+    }
+
+    function modelJson() {
+        const value = [];
+        for (let index = 0; index < componentModel.count; ++index) {
+            const item = componentModel.get(index);
+            let settings = {};
+            try {
+                settings = JSON.parse(item.settingsJson);
+            } catch (error) {
+                settings = {};
+            }
+            value.push({type: item.componentType, settings: settings});
+        }
+        return Components.serialize(value);
+    }
+
+    function saveModel() {
+        if (initializing) {
+            return;
+        }
+        const serialized = modelJson();
+        if (cfg_components !== serialized) {
+            cfg_components = serialized;
+        }
+        if (cfg_componentConfigVersion !== 2) {
+            cfg_componentConfigVersion = 2;
+        }
+    }
+
+    function addComponent(type) {
+        if (containsType(type)) {
+            return;
+        }
+        componentModel.append({
+            componentType: type,
+            settingsJson: JSON.stringify(Components.defaultSettings(type))
+        });
+        saveModel();
+    }
+
+    function removeComponent(index) {
+        componentModel.remove(index);
+        saveModel();
+    }
+
+    function moveComponent(from, to) {
+        if (from < 0 || to < 0 || from === to
+                || from >= componentModel.count || to >= componentModel.count) {
+            return;
+        }
+        componentModel.move(from, to, 1);
+        draggedIndex = to;
+        saveModel();
+    }
+
+    function updateSetting(index, key, value) {
+        let settings = {};
+        try {
+            settings = JSON.parse(componentModel.get(index).settingsJson);
+        } catch (error) {
+            settings = {};
+        }
+        settings[key] = value;
+        componentModel.setProperty(index, "settingsJson", JSON.stringify(settings));
+        saveModel();
+    }
+
+    Component.onCompleted: loadModel()
+    onCfg_componentsChanged: {
+        if (!initializing) {
+            replaceModel(cfg_components);
+        }
+    }
+
+    ListModel {
+        id: componentModel
+    }
+
+    header: Kirigami.InlineMessage {
+        visible: componentModel.count === 0
+        type: Kirigami.MessageType.Information
+        text: i18n("No panel components are enabled. Add one below.")
+    }
+
+    view: ListView {
+        id: componentList
+
+        spacing: Kirigami.Units.smallSpacing
+        model: componentModel
+        leftMargin: Kirigami.Units.smallSpacing
+        rightMargin: Kirigami.Units.smallSpacing
+        topMargin: Kirigami.Units.smallSpacing
+        bottomMargin: Kirigami.Units.smallSpacing
+
+            delegate: Kirigami.AbstractCard {
+                id: card
+
+                required property int index
+                required property string componentType
+                required property string settingsJson
+                readonly property var settings: {
+                    try {
+                        return JSON.parse(settingsJson);
+                    } catch (error) {
+                        return {};
+                    }
+                }
+
+                Drag.active: dragHandler.active
+                Drag.source: card
+                Drag.hotSpot.x: width / 2
+                Drag.hotSpot.y: height / 2
+                opacity: dragHandler.active ? 0.75 : 1
+                z: dragHandler.active ? 2 : 0
+
+                DropArea {
+                    anchors.fill: parent
+                    onEntered: function(drag) {
+                        if (root.draggedIndex >= 0) {
+                            root.moveComponent(root.draggedIndex, card.index);
+                        }
+                    }
+                }
+
+                contentItem: ColumnLayout {
+                    id: contentColumn
+
+                    RowLayout {
+                        Layout.fillWidth: true
+
+                        Kirigami.Icon {
+                            source: root.iconFor(card.componentType)
+                            implicitWidth: Kirigami.Units.iconSizes.smallMedium
+                            implicitHeight: implicitWidth
+                        }
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 0
+
+                            Label {
+                                text: root.titleFor(card.componentType)
+                                font.bold: true
+                            }
+
+                            Label {
+                                Layout.fillWidth: true
+                                text: root.descriptionFor(card.componentType)
+                                opacity: 0.7
+                                wrapMode: Text.WordWrap
+                            }
+                        }
+
+                        ToolButton {
+                            icon.name: "go-up-symbolic"
+                            text: i18n("Move up")
+                            display: AbstractButton.IconOnly
+                            enabled: card.index > 0
+                            onClicked: root.moveComponent(card.index, card.index - 1)
+                            ToolTip.text: text
+                            ToolTip.visible: hovered
+                        }
+
+                        ToolButton {
+                            icon.name: "go-down-symbolic"
+                            text: i18n("Move down")
+                            display: AbstractButton.IconOnly
+                            enabled: card.index + 1 < componentModel.count
+                            onClicked: root.moveComponent(card.index, card.index + 1)
+                            ToolTip.text: text
+                            ToolTip.visible: hovered
+                        }
+
+                        ToolButton {
+                            id: dragHandle
+                            icon.name: "transform-move-symbolic"
+                            text: i18n("Drag to reorder")
+                            display: AbstractButton.IconOnly
+                            ToolTip.text: text
+                            ToolTip.visible: hovered
+
+                            DragHandler {
+                                id: dragHandler
+                                target: card
+                                onActiveChanged: root.draggedIndex = active
+                                    ? card.index : -1
+                            }
+                        }
+
+                        ToolButton {
+                            icon.name: "edit-delete-symbolic"
+                            text: i18n("Remove")
+                            display: AbstractButton.IconOnly
+                            onClicked: root.removeComponent(card.index)
+                            ToolTip.text: text
+                            ToolTip.visible: hovered
+                        }
+                    }
+
+                    GridLayout {
+                        Layout.fillWidth: true
+                        columns: 2
+                        visible: card.componentType === "runner"
+
+                        Label { text: i18n("Runner:") }
+                        ComboBox {
+                            Layout.fillWidth: true
+                            model: [
+                                i18n("Cat"), i18n("Dog"), i18n("Slime"),
+                                i18n("Drop"), i18n("Coffee"),
+                                i18n("Newton's cradle"), i18n("Engine"),
+                                i18n("Mochi")
+                            ]
+                            currentIndex: Math.max(0,
+                                root.runnerIds.indexOf(card.settings.runner))
+                            onActivated: root.updateSetting(
+                                card.index, "runner", root.runnerIds[currentIndex]
+                            )
+                        }
+
+                        Label { text: i18n("Running speed:") }
+                        SpinBox {
+                            from: 25
+                            to: 200
+                            stepSize: 25
+                            value: Number(card.settings.speedPercent || 100)
+                            textFromValue: function(value) { return i18n("%1%", value); }
+                            valueFromText: function(text) { return parseInt(text, 10); }
+                            onValueModified: root.updateSetting(
+                                card.index, "speedPercent", value
+                            )
+                        }
+
+                        Label { text: i18n("Idle threshold:") }
+                        SpinBox {
+                            from: 0
+                            to: 25
+                            value: Number(card.settings.idleThreshold || 0)
+                            enabled: restCheck.checked
+                            textFromValue: function(value) { return i18n("%1%", value); }
+                            valueFromText: function(text) { return parseInt(text, 10); }
+                            onValueModified: root.updateSetting(
+                                card.index, "idleThreshold", value
+                            )
+                        }
+
+                        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
+                        ColumnLayout {
+                            CheckBox {
+                                id: restCheck
+                                text: i18n("Rest when the system is idle")
+                                checked: Boolean(card.settings.useIdleFrame)
+                                onClicked: root.updateSetting(
+                                    card.index, "useIdleFrame", checked
+                                )
+                            }
+                            CheckBox {
+                                text: i18n("Flip runner horizontally")
+                                checked: Boolean(card.settings.flipHorizontally)
+                                onClicked: root.updateSetting(
+                                    card.index, "flipHorizontally", checked
+                                )
+                            }
+                            CheckBox {
+                                text: i18n("Reverse speed response to CPU usage")
+                                checked: Boolean(card.settings.reverseSpeed)
+                                onClicked: root.updateSetting(
+                                    card.index, "reverseSpeed", checked
+                                )
+                            }
+                            CheckBox {
+                                text: i18n("Show CPU usage percentage")
+                                checked: Boolean(card.settings.showCpuUsage)
+                                onClicked: root.updateSetting(
+                                    card.index, "showCpuUsage", checked
+                                )
+                            }
+                        }
+                    }
+
+                    GridLayout {
+                        Layout.fillWidth: true
+                        columns: 2
+                        visible: card.componentType === "ai"
+
+                        Label { text: i18n("Context monitoring:") }
+                        ColumnLayout {
+                            CheckBox {
+                                text: i18n("Codex")
+                                checked: Boolean(card.settings.showCodex)
+                                onClicked: root.updateSetting(
+                                    card.index, "showCodex", checked
+                                )
+                            }
+                            CheckBox {
+                                id: claudeCheck
+                                text: i18n("Claude Code")
+                                checked: Boolean(card.settings.showClaude)
+                                onClicked: root.updateSetting(
+                                    card.index, "showClaude", checked
+                                )
+                            }
+                            CheckBox {
+                                text: i18n("Today's token totals")
+                                checked: Boolean(card.settings.showDaily)
+                                onClicked: root.updateSetting(
+                                    card.index, "showDaily", checked
+                                )
+                            }
+                        }
+
+                        Label { text: i18n("Claude context window:") }
+                        SpinBox {
+                            from: 10000
+                            to: 2000000
+                            stepSize: 10000
+                            enabled: claudeCheck.checked
+                            value: Number(card.settings.claudeContextWindow || 200000)
+                            textFromValue: function(value) {
+                                return i18n("%1K tokens", Math.round(value / 1000));
+                            }
+                            valueFromText: function(text) {
+                                return Math.max(10000, parseInt(text, 10) * 1000);
+                            }
+                            onValueModified: root.updateSetting(
+                                card.index, "claudeContextWindow", value
+                            )
+                        }
+                    }
+
+                    CheckBox {
+                        Layout.fillWidth: true
+                        visible: card.componentType === "memory"
+                            || card.componentType === "disk"
+                        text: i18n("Show used and total capacity next to the ring")
+                        checked: Boolean(card.settings.showText)
+                        onClicked: root.updateSetting(
+                            card.index, "showText", checked
+                        )
+                    }
+                }
+            }
+    }
+
+    footer: RowLayout {
+        spacing: Kirigami.Units.smallSpacing
+
+            Label {
+                text: i18n("Component spacing:")
+            }
+
+            SpinBox {
+                from: 0
+                to: 24
+                value: root.cfg_indicatorSpacing
+                textFromValue: function(value) {
+                    return i18n("%1 px", value);
+                }
+                valueFromText: function(text) {
+                    return parseInt(text, 10);
+                }
+                onValueModified: root.cfg_indicatorSpacing = value
+            }
+
+            Item { Layout.fillWidth: true }
+
+            Button {
+                text: i18n("Add component…")
+                icon.name: "list-add-symbolic"
+                onClicked: addMenu.open()
+
+                Menu {
+                    id: addMenu
+
+                    Instantiator {
+                        model: Components.componentTypes
+
+                        delegate: MenuItem {
+                            required property string modelData
+                            text: root.titleFor(modelData)
+                            icon.name: root.iconFor(modelData)
+                            enabled: !root.containsType(modelData)
+                            onTriggered: root.addComponent(modelData)
+                        }
+
+                        onObjectAdded: function(index, object) {
+                            addMenu.insertItem(index, object);
+                        }
+                        onObjectRemoved: function(index, object) {
+                            addMenu.removeItem(object);
+                        }
+                    }
+                }
+            }
     }
 }

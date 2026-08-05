@@ -7,11 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- Optional, independently configurable Codex and Claude Code context rings
-  with brand marks, plus a two-line component for today's local token totals;
-  all token indicators are disabled by default.
+- Reworked RunCat into a modular panel widget whose Runner, temperature,
+  memory, disk, network, and AI indicators can be added, removed, configured,
+  and reordered independently. New installations start with only the Runner;
+  memory and disk use compact icon-centered rings, and optional Codex and
+  Claude Code usage is read from local session data. The separate dashboard
+  was removed now that the relevant information can be shown in the panel.
+
+### Fixed
+
+- Stabilized dynamic component loading, configuration-page layout, and panel
+  sizing while preserving existing settings during migration.
 
 ## [0.3.0] - 2026-08-05
 

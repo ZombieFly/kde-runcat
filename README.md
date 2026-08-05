@@ -41,47 +41,26 @@ After changing the widget, install it and restart Plasma Shell in one command:
 make reload
 ```
 
+## Components
+
+New installations start with only the Runner. The widget settings can add,
+remove, configure, and reorder temperature, memory, disk, network, and AI
+indicators. AI usage is read locally from Codex and Claude Code session logs;
+no credentials or prompts are sent anywhere.
+
 ## Development
 
-Development checks additionally use `jq`, `xmllint`, Qt's `qmllint` and
-`qmltestrunner`, and `zip`.
+Development requires `jq`, `xmllint`, Qt's QML tools, and `zip`.
 
 ```bash
-make check
-make test
-make package
+make check    # Static checks
+make test     # Automated tests
+make reload   # Install and restart Plasma Shell
+make package  # Build the .plasmoid package
 ```
 
-`make package` creates `build/com.github.runcatkde.runcat.plasmoid` for manual
-installation or distribution.
-
-RunCat samples Plasma system-monitor sensors without a background daemon and
-smooths CPU data to keep animation stable. Behavior settings control the runner,
-speed response, and optional panel indicators for CPU usage and temperature,
-memory, disk, and network activity. Clicking the runner opens the full system
-dashboard; unavailable hardware sensors are handled automatically.
-
-The optional AI token indicator reads local Codex and Claude Code session logs.
-Its two rings show the most recently active session's context usage, while the
-adjacent labels show token consumption since local midnight. Cached input is
-included. Claude Code does not persist a context-window limit, so its default
-200K window can be changed in the widget settings. Codex and Claude Code can
-be shown independently, and today's two-line totals are a separate optional
-component. No credentials or prompts are sent anywhere by the widget.
-
-### Changelog
-
-Every feature and bug fix must include a short entry under `Unreleased` in
-`CHANGELOG.md`.
-
-### Releasing a new version
-
-1. Update the version in `package/metadata.json`.
-2. In `CHANGELOG.md`, rename `Unreleased` to the new version and release date,
-   then add a new empty `Unreleased` section above it.
-3. Commit the release changes with `chore: release x.y.z`.
-4. Push the version tag. The release workflow creates a draft GitHub Release;
-   verify its notes and artifacts, then publish it manually.
+Release changes should update `package/metadata.json` and `CHANGELOG.md` before
+the version tag is pushed. CI creates the GitHub Release as a draft.
 
 ## License
 

@@ -12,17 +12,17 @@ check:
 	find $(PACKAGE_DIR)/contents/images -name '*.svg' -exec xmllint --noout {} +
 	$(QMLLINT) -I /usr/lib/qt6/qml \
 		$(PACKAGE_DIR)/contents/ui/main.qml \
-		$(PACKAGE_DIR)/contents/ui/Dashboard.qml \
-		$(PACKAGE_DIR)/contents/ui/MetricGauge.qml \
+		$(PACKAGE_DIR)/contents/ui/PanelComponent.qml \
+		$(PACKAGE_DIR)/contents/ui/ResourceRing.qml \
 		$(PACKAGE_DIR)/contents/ui/CpuTemperature.qml \
-		$(PACKAGE_DIR)/contents/ui/UsagePie.qml \
 		$(PACKAGE_DIR)/contents/ui/NetworkRate.qml \
 		$(PACKAGE_DIR)/contents/ui/TokenUsage.qml \
 		$(PACKAGE_DIR)/contents/ui/TokenRing.qml \
-		$(PACKAGE_DIR)/contents/ui/NetworkStats.qml \
 		$(PACKAGE_DIR)/contents/ui/config/ConfigBehavior.qml \
 		$(PACKAGE_DIR)/contents/config/config.qml \
 		tests/tst_animation.qml \
+		tests/tst_components.qml \
+		tests/tst_panel_component.qml \
 		tests/tst_runners.qml \
 		tests/tst_sensors.qml
 	PYTHONPYCACHEPREFIX=/tmp/kde-runcat-pycache \

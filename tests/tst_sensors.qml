@@ -6,76 +6,40 @@ import "../package/contents/code/sensors.js" as SensorSelection
 TestCase {
     name: "SensorSelection"
 
-    function test_prefersAggregateGpuSensors() {
-        verify(SensorSelection.sensorScore(
-            "gpu/all/usage", "All GPUs Usage", "gpuUsage"
-        ) > SensorSelection.sensorScore(
-            "gpu/gpu0/usage", "GPU 1 Usage", "gpuUsage"
-        ));
-    }
-
-    function test_rejectsUnrelatedGpuSensors() {
-        compare(SensorSelection.sensorScore(
-            "gpu/gpu0/coreFrequency", "Core frequency", "gpuUsage"
-        ), -1);
-    }
-
-    function test_prefersPhysicalNetworkForIpv4() {
-        verify(SensorSelection.sensorScore(
-            "network/wlan0/ipv4address", "IPv4 Address", "localIpv4"
-        ) > SensorSelection.sensorScore(
-            "network/docker0/ipv4address", "IPv4 Address", "localIpv4"
-        ));
-    }
-
-    function test_rejectsLoopbackIpv4() {
-        compare(SensorSelection.sensorScore(
-            "network/lo/ipv4address", "IPv4 Address", "localIpv4"
-        ), -1);
-    }
-
     function test_prefersCpuPackageTemperature() {
-        verify(SensorSelection.sensorScore(
+        verify(SensorSelection.cpuTemperatureSensorScore(
             "lmsensors/coretemp-isa-0000/Package_id_0/temp1_input",
-            "Package id 0",
-            "cpuTemperature"
-        ) > SensorSelection.sensorScore(
+            "Package id 0"
+        ) > SensorSelection.cpuTemperatureSensorScore(
             "lmsensors/coretemp-isa-0000/Core_0/temp2_input",
-            "Core 0",
-            "cpuTemperature"
+            "Core 0"
         ));
     }
 
     function test_prefersAggregateCpuTemperature() {
-        verify(SensorSelection.sensorScore(
+        verify(SensorSelection.cpuTemperatureSensorScore(
             "cpu/all/averageTemperature",
-            "Average CPU Temperature",
-            "cpuTemperature"
-        ) > SensorSelection.sensorScore(
+            "Average CPU Temperature"
+        ) > SensorSelection.cpuTemperatureSensorScore(
             "cpu/cpu0/temperature",
-            "Core 1 Current Temperature",
-            "cpuTemperature"
+            "Core 1 Current Temperature"
         ));
-        verify(SensorSelection.sensorScore(
+        verify(SensorSelection.cpuTemperatureSensorScore(
             "cpu/cpu0/temperature",
-            "Core 1 Current Temperature",
-            "cpuTemperature"
-        ) > SensorSelection.sensorScore(
+            "Core 1 Current Temperature"
+        ) > SensorSelection.cpuTemperatureSensorScore(
             "lmsensors/coretemp-isa-0000/Package_id_0/temp1_input",
-            "Package id 0",
-            "cpuTemperature"
+            "Package id 0"
         ));
     }
 
     function test_prefersAverageOverMaximumCpuTemperature() {
-        verify(SensorSelection.sensorScore(
+        verify(SensorSelection.cpuTemperatureSensorScore(
             "cpu/all/averageTemperature",
-            "Average CPU Temperature",
-            "cpuTemperature"
-        ) > SensorSelection.sensorScore(
+            "Average CPU Temperature"
+        ) > SensorSelection.cpuTemperatureSensorScore(
             "cpu/all/maximumTemperature",
-            "Maximum CPU Temperature",
-            "cpuTemperature"
+            "Maximum CPU Temperature"
         ));
     }
 
@@ -87,17 +51,16 @@ TestCase {
         ];
 
         for (const sensor of sensors) {
-            compare(SensorSelection.sensorScore(
-                sensor[0], sensor[1], "cpuTemperature"
+            compare(SensorSelection.cpuTemperatureSensorScore(
+                sensor[0], sensor[1]
             ), -1);
         }
     }
 
     function test_rejectsTemperatureLimits() {
-        compare(SensorSelection.sensorScore(
+        compare(SensorSelection.cpuTemperatureSensorScore(
             "lmsensors/k10temp-pci-00c3/Tctl/temp1_crit",
-            "Critical temperature",
-            "cpuTemperature"
+            "Critical temperature"
         ), -1);
     }
 }
