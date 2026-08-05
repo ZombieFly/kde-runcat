@@ -71,6 +71,8 @@ Every feature and bug fix must include a short entry under `Unreleased` in
 2. In `CHANGELOG.md`, rename `Unreleased` to the new version and release date,
    then add a new empty `Unreleased` section above it.
 3. Commit the release changes with `chore: release x.y.z`.
+4. Push the version tag. The release workflow creates a draft GitHub Release;
+   verify its notes and artifacts, then publish it manually.
 
 ## License
 

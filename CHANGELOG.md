@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - Increased the size of the memory and disk usage pies.
 - Assigned distinct colors to memory, disk, network, and temperature indicators.
+- Create GitHub Releases as drafts for manual review before publication.
 
 ### Fixed
 
