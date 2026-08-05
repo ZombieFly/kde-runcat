@@ -46,15 +46,58 @@ TestCase {
         ));
     }
 
-    function test_rejectsTemperatureLimits() {
+    function test_prefersAggregateCpuTemperature() {
         verify(SensorSelection.sensorScore(
-            "lmsensors/k10temp-pci-00c3/Tctl/temp1_input",
-            "Tctl",
+            "cpu/all/averageTemperature",
+            "Average CPU Temperature",
             "cpuTemperature"
         ) > SensorSelection.sensorScore(
+            "cpu/cpu0/temperature",
+            "Core 1 Current Temperature",
+            "cpuTemperature"
+        ));
+        verify(SensorSelection.sensorScore(
+            "cpu/cpu0/temperature",
+            "Core 1 Current Temperature",
+            "cpuTemperature"
+        ) > SensorSelection.sensorScore(
+            "lmsensors/coretemp-isa-0000/Package_id_0/temp1_input",
+            "Package id 0",
+            "cpuTemperature"
+        ));
+    }
+
+    function test_prefersAverageOverMaximumCpuTemperature() {
+        verify(SensorSelection.sensorScore(
+            "cpu/all/averageTemperature",
+            "Average CPU Temperature",
+            "cpuTemperature"
+        ) > SensorSelection.sensorScore(
+            "cpu/all/maximumTemperature",
+            "Maximum CPU Temperature",
+            "cpuTemperature"
+        ));
+    }
+
+    function test_rejectsNonCpuHardwareTemperatures() {
+        const sensors = [
+            ["lmsensors/nvme-pci-0100/temp1", "Composite"],
+            ["lmsensors/iwlwifi_1_1-virtual-0/temp1", "Temperature 1"],
+            ["lmsensors/pch_cometlake_0-virtual-0/temp1", "Temperature 1"]
+        ];
+
+        for (const sensor of sensors) {
+            compare(SensorSelection.sensorScore(
+                sensor[0], sensor[1], "cpuTemperature"
+            ), -1);
+        }
+    }
+
+    function test_rejectsTemperatureLimits() {
+        compare(SensorSelection.sensorScore(
             "lmsensors/k10temp-pci-00c3/Tctl/temp1_crit",
             "Critical temperature",
             "cpuTemperature"
-        ));
+        ), -1);
     }
 }

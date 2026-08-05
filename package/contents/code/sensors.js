@@ -33,13 +33,31 @@ function sensorScore(sensorId, name, kind) {
         return score;
     }
     if (kind === "cpuTemperature") {
-        if (!id.startsWith("lmsensors/")
-                || (!text.includes("temp") && !text.includes("package")
-                    && !text.includes("tctl") && !text.includes("tdie"))) {
+        if (id === "cpu/all/averagetemperature") {
+            return 1000;
+        }
+        if (id === "cpu/all/maximumtemperature") {
+            return 900;
+        }
+        if (/^cpu\/cpu\d+\/temperature$/.test(id)) {
+            return 800;
+        }
+
+        if (!id.startsWith("lmsensors/")) {
             return -1;
         }
 
-        let score = 10;
+        const cpuSensor = text.includes("package")
+            || text.includes("tctl")
+            || text.includes("tdie")
+            || text.includes("coretemp")
+            || text.includes("k10temp")
+            || text.includes("zenpower");
+        if (!cpuSensor) {
+            return -1;
+        }
+
+        let score = 100;
         if (text.includes("package")) {
             score += 100;
         }
@@ -52,12 +70,15 @@ function sensorScore(sensorId, name, kind) {
         if (text.includes("coretemp") || text.includes("k10temp")) {
             score += 40;
         }
+        if (text.includes("zenpower")) {
+            score += 40;
+        }
         if (text.includes("input")) {
             score += 20;
         }
         if (text.includes("crit") || text.includes("max")
                 || text.includes("alarm") || text.includes("emergency")) {
-            score -= 200;
+            return -1;
         }
         return score;
     }
