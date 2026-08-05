@@ -66,8 +66,10 @@ as optional pies next to it: memory is blue and disk is green. Download and
 upload rates can additionally be shown as two compact lines on the right, using
 cyan for download and purple for upload. The network display is omitted when
 the panel is too short to fit both lines. All indicators are disabled by
-default. The settings can also reverse the speed response so the runner moves
-faster at low CPU usage and slower at high CPU usage.
+default. The spacing between the runner and each enabled indicator is also
+configurable and defaults to 8 pixels. The settings can reverse the speed
+response so the runner moves faster at low CPU usage and slower at high CPU
+usage.
 
 Clicking the runner opens a Plasma dashboard with CPU, GPU, memory, disk, and
 network activity. The dashboard uses Kirigami and KQuickCharts so its colors,

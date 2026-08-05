@@ -164,11 +164,15 @@ PlasmoidItem {
         readonly property real usagePieSize: Math.round(
             Math.min(height, runnerImplicitHeight) * 0.9
         )
+        readonly property real componentSpacing: Math.max(
+            0,
+            Math.min(24, Number(Plasmoid.configuration.indicatorSpacing))
+        )
         readonly property real indicatorSpacing: indicatorCount > 1
-            ? Kirigami.Units.smallSpacing
+            ? componentSpacing
             : 0
         readonly property real contentSpacing: indicatorCount > 0
-            ? Kirigami.Units.smallSpacing
+            ? componentSpacing
             : 0
         readonly property real indicatorImplicitWidth:
             (Plasmoid.configuration.showMemoryUsage ? usagePieImplicitSize : 0)

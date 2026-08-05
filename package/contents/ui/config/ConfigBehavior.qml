@@ -30,6 +30,8 @@ KCM.SimpleKCM {
     property bool cfg_showDiskUsageDefault
     property alias cfg_showNetworkRate: showNetworkRate.checked
     property bool cfg_showNetworkRateDefault
+    property alias cfg_indicatorSpacing: indicatorSpacing.value
+    property int cfg_indicatorSpacingDefault
     property alias cfg_reverseSpeed: reverseSpeed.checked
     property bool cfg_reverseSpeedDefault
 
@@ -104,6 +106,17 @@ KCM.SimpleKCM {
         CheckBox {
             id: showNetworkRate
             text: i18n("Show network rate next to the runner")
+        }
+
+        SpinBox {
+            id: indicatorSpacing
+
+            from: 0
+            to: 24
+            stepSize: 1
+            Kirigami.FormData.label: i18n("Indicator spacing:")
+            textFromValue: function(value) { return i18n("%1 px", value); }
+            valueFromText: function(text) { return parseInt(text, 10); }
         }
 
         CheckBox {
