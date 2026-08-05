@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   optional, color-coded Celsius or Fahrenheit line within the Runner, and the
   separate dashboard was removed now that relevant information can be shown
   directly in the panel.
+- Simplified AI settings to Codex and Claude switches; each enabled service now
+  shows both its context ring and today's token usage.
 
 ### Fixed
 

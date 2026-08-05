@@ -86,7 +86,7 @@ PlasmoidItem {
     }
 
     function migrateConfiguration() {
-        if (Plasmoid.configuration.componentConfigVersion >= 4) {
+        if (Plasmoid.configuration.componentConfigVersion >= 6) {
             return;
         }
         const value = Plasmoid.configuration.componentConfigVersion < 1
@@ -95,7 +95,7 @@ PlasmoidItem {
         Plasmoid.configuration.components = Components.serialize(
             value
         );
-        Plasmoid.configuration.componentConfigVersion = 4;
+        Plasmoid.configuration.componentConfigVersion = 6;
     }
 
     function visiblePanelComponentCount() {
@@ -104,8 +104,7 @@ PlasmoidItem {
             const component = panelComponents[index];
             if (component.type !== "ai"
                     || component.settings.showCodex
-                    || component.settings.showClaude
-                    || component.settings.showDaily) {
+                    || component.settings.showClaude) {
                 ++count;
             }
         }
@@ -164,7 +163,6 @@ PlasmoidItem {
                     visible: componentType !== "ai"
                         || Boolean(componentSettings.showCodex)
                         || Boolean(componentSettings.showClaude)
-                        || Boolean(componentSettings.showDaily)
                 }
             }
         }

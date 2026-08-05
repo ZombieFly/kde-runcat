@@ -137,8 +137,8 @@ KCM.ScrollViewKCM {
         if (cfg_components !== serialized) {
             cfg_components = serialized;
         }
-        if (cfg_componentConfigVersion !== 4) {
-            cfg_componentConfigVersion = 4;
+        if (cfg_componentConfigVersion !== 6) {
+            cfg_componentConfigVersion = 6;
         }
     }
 
@@ -182,8 +182,8 @@ KCM.ScrollViewKCM {
         if (cfg_components !== serialized) {
             cfg_components = serialized;
         }
-        if (cfg_componentConfigVersion !== 4) {
-            cfg_componentConfigVersion = 4;
+        if (cfg_componentConfigVersion !== 6) {
+            cfg_componentConfigVersion = 6;
         }
     }
 
@@ -466,7 +466,7 @@ KCM.ScrollViewKCM {
                         columns: 2
                         visible: card.componentType === "ai"
 
-                        Label { text: i18n("Context monitoring:") }
+                        Label { text: i18n("Show:") }
                         ColumnLayout {
                             CheckBox {
                                 text: i18n("Codex")
@@ -483,32 +483,35 @@ KCM.ScrollViewKCM {
                                     card.index, "showClaude", checked
                                 )
                             }
-                            CheckBox {
-                                text: i18n("Today's token totals")
-                                checked: Boolean(card.settings.showDaily)
-                                onClicked: root.updateSetting(
-                                    card.index, "showDaily", checked
-                                )
-                            }
                         }
 
-                        Label { text: i18n("Claude context window:") }
+                        Label {
+                            visible: claudeCheck.checked
+                            text: i18n("Claude context window:")
+                        }
                         SpinBox {
+                            visible: claudeCheck.checked
                             from: 10000
                             to: 2000000
                             stepSize: 10000
-                            enabled: claudeCheck.checked
-                            value: Number(card.settings.claudeContextWindow || 200000)
+                            value: Number(
+                                card.settings.claudeContextWindow || 200000
+                            )
                             textFromValue: function(value) {
-                                return i18n("%1K tokens", Math.round(value / 1000));
+                                return i18n(
+                                    "%1K tokens", Math.round(value / 1000)
+                                );
                             }
                             valueFromText: function(text) {
-                                return Math.max(10000, parseInt(text, 10) * 1000);
+                                return Math.max(
+                                    10000, parseInt(text, 10) * 1000
+                                );
                             }
                             onValueModified: root.updateSetting(
                                 card.index, "claudeContextWindow", value
                             )
                         }
+
                     }
 
                     CheckBox {

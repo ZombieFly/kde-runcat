@@ -308,7 +308,6 @@ Item {
             )
             showCodex: Boolean(root.componentSettings.showCodex)
             showClaude: Boolean(root.componentSettings.showClaude)
-            showDaily: Boolean(root.componentSettings.showDaily)
         }
     }
 }

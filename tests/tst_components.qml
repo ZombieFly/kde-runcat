@@ -36,7 +36,6 @@ TestCase {
             {type: "ai", settings: {
                 showCodex: false,
                 showClaude: true,
-                showDaily: true,
                 claudeContextWindow: 400000
             }}
         ]));
@@ -109,9 +108,8 @@ TestCase {
         compare(value[1].type, "memory");
         compare(value[2].type, "network");
         compare(value[3].type, "ai");
-        compare(value[3].settings.showCodex, false);
+        compare(value[3].settings.showCodex, true);
         compare(value[3].settings.showClaude, true);
-        compare(value[3].settings.showDaily, true);
         compare(value[3].settings.claudeContextWindow, 300000);
     }
 
@@ -146,5 +144,15 @@ TestCase {
             settings: {temperatureUnit: "kelvin"}
         }]);
         compare(invalid[0].settings.temperatureUnit, "celsius");
+    }
+
+    function test_ai_discards_separate_daily_setting() {
+        const value = Components.normalize([{
+            type: "ai",
+            settings: {showCodex: false, showClaude: true, showDaily: true}
+        }]);
+        compare(value[0].settings.showCodex, true);
+        compare(value[0].settings.showClaude, true);
+        verify(value[0].settings.showDaily === undefined);
     }
 }

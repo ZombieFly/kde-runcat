@@ -24,7 +24,6 @@ function defaultSettings(type) {
         return {
             showCodex: true,
             showClaude: true,
-            showDaily: false,
             claudeContextWindow: 200000
         };
     case "memory":
@@ -78,13 +77,14 @@ function normalizedSettings(type, source) {
     }
 
     if (type === "ai") {
+        const legacyDaily = Boolean(value.showDaily);
         return {
             showCodex: value.showCodex === undefined
-                ? defaults.showCodex : Boolean(value.showCodex),
+                ? defaults.showCodex
+                : Boolean(value.showCodex) || legacyDaily,
             showClaude: value.showClaude === undefined
-                ? defaults.showClaude : Boolean(value.showClaude),
-            showDaily: value.showDaily === undefined
-                ? defaults.showDaily : Boolean(value.showDaily),
+                ? defaults.showClaude
+                : Boolean(value.showClaude) || legacyDaily,
             claudeContextWindow: boundedNumber(
                 value.claudeContextWindow,
                 defaults.claudeContextWindow,
@@ -211,9 +211,10 @@ function migrateLegacy(configuration) {
             || configuration.showClaudeTokenUsage
             || configuration.showDailyTokenUsage) {
         result.push(definition("ai", {
-            showCodex: configuration.showCodexTokenUsage,
-            showClaude: configuration.showClaudeTokenUsage,
-            showDaily: configuration.showDailyTokenUsage,
+            showCodex: configuration.showCodexTokenUsage
+                || configuration.showDailyTokenUsage,
+            showClaude: configuration.showClaudeTokenUsage
+                || configuration.showDailyTokenUsage,
             claudeContextWindow: configuration.claudeContextWindow
         }));
     }

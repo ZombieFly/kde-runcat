@@ -6,13 +6,14 @@ import QtQuick.Controls as QQC2
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasma5support as Plasma5Support
 
+import "../code/token_format.js" as TokenFormat
+
 Item {
     id: root
 
     property int claudeContextWindow: 200000
     property bool showCodex: true
     property bool showClaude: true
-    property bool showDaily: true
     property int codexTodayTokens: 0
     property int codexContextTokens: 0
     property int codexContextWindow: 0
@@ -49,20 +50,6 @@ Item {
             return 0;
         }
         return Math.max(0, Math.min(100, tokens / windowTokens * 100));
-    }
-
-    function formatTokens(tokens) {
-        const value = Math.max(0, Number(tokens));
-        let scaled;
-        let suffix;
-        if (value >= 1000000) {
-            scaled = value / 1000000;
-            suffix = "m";
-        } else {
-            scaled = value / 1000;
-            suffix = "k";
-        }
-        return scaled.toFixed(1).replace(/\.0$/, "") + suffix;
     }
 
     function updateUsage(rawOutput) {
@@ -147,23 +134,25 @@ Item {
         Column {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 0
-            visible: root.showDaily
+            visible: root.showCodex || root.showClaude
 
             QQC2.Label {
                 font: Kirigami.Theme.smallFont
                 color: "#10a37f"
+                visible: root.showCodex
                 text: i18n(
                     "codex: %1",
-                    root.formatTokens(root.codexTodayTokens)
+                    TokenFormat.formatTokens(root.codexTodayTokens)
                 )
             }
 
             QQC2.Label {
                 font: Kirigami.Theme.smallFont
                 color: "#d97757"
+                visible: root.showClaude
                 text: i18n(
                     "claude: %1",
-                    root.formatTokens(root.claudeTodayTokens)
+                    TokenFormat.formatTokens(root.claudeTodayTokens)
                 )
             }
         }
