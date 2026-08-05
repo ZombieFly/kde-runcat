@@ -12,6 +12,7 @@ background daemon is required.
 - KDE Plasma 6
 - `ksystemstats` and the `org.kde.ksysguard.sensors` QML module
 - KDE's KQuickCharts and KItemModels QML modules
+- Python 3 (for optional local Codex and Claude Code token statistics)
 - `kpackagetool6`
 
 Arch Linux provides these through the `plasma-workspace`, `ksystemstats`, and
@@ -59,6 +60,14 @@ smooths CPU data to keep animation stable. Behavior settings control the runner,
 speed response, and optional panel indicators for CPU usage and temperature,
 memory, disk, and network activity. Clicking the runner opens the full system
 dashboard; unavailable hardware sensors are handled automatically.
+
+The optional AI token indicator reads local Codex and Claude Code session logs.
+Its two rings show the most recently active session's context usage, while the
+adjacent labels show token consumption since local midnight. Cached input is
+included. Claude Code does not persist a context-window limit, so its default
+200K window can be changed in the widget settings. Codex and Claude Code can
+be shown independently, and today's two-line totals are a separate optional
+component. No credentials or prompts are sent anywhere by the widget.
 
 ### Changelog
 

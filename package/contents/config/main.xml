@@ -34,6 +34,18 @@
     <entry name="showNetworkRate" type="Bool">
       <default>false</default>
     </entry>
+    <entry name="showCodexTokenUsage" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showClaudeTokenUsage" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showDailyTokenUsage" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="claudeContextWindow" type="Int">
+      <default>200000</default>
+    </entry>
     <entry name="indicatorSpacing" type="Int">
       <default>8</default>
     </entry>

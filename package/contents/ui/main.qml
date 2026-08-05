@@ -156,6 +156,7 @@ PlasmoidItem {
             + (Plasmoid.configuration.showCpuUsage ? 1 : 0)
             + (Plasmoid.configuration.showCpuTemperature ? 1 : 0)
             + (networkRate.visible ? 1 : 0)
+            + (tokenUsage.visible ? 1 : 0)
         readonly property real usagePieImplicitSize: Math.round(
             runnerImplicitHeight * 0.9
         )
@@ -191,6 +192,7 @@ PlasmoidItem {
             + (Plasmoid.configuration.showCpuTemperature
                 ? temperatureImplicitWidth : 0)
             + (networkRate.visible ? networkRate.implicitWidth : 0)
+            + (tokenUsage.visible ? tokenUsage.implicitWidth : 0)
             + Math.max(0, indicatorCount - 1) * indicatorSpacing
         readonly property real indicatorMinimumWidth:
             (Plasmoid.configuration.showMemoryUsage ? usagePieMinimumSize : 0)
@@ -199,6 +201,7 @@ PlasmoidItem {
             + (Plasmoid.configuration.showCpuTemperature
                 ? temperatureMinimumWidth : 0)
             + (networkRate.visible ? networkRate.implicitWidth : 0)
+            + (tokenUsage.visible ? tokenUsage.implicitWidth : 0)
             + Math.max(0, indicatorCount - 1) * indicatorSpacing
         readonly property real indicatorWidth:
             (Plasmoid.configuration.showMemoryUsage ? usagePieSize : 0)
@@ -207,6 +210,7 @@ PlasmoidItem {
             + (Plasmoid.configuration.showCpuTemperature
                 ? temperatureWidth : 0)
             + (networkRate.visible ? networkRate.implicitWidth : 0)
+            + (tokenUsage.visible ? tokenUsage.implicitWidth : 0)
             + Math.max(0, indicatorCount - 1) * indicatorSpacing
 
         implicitWidth: runnerImplicitWidth + contentSpacing
@@ -337,6 +341,18 @@ PlasmoidItem {
                 width: implicitWidth
                 height: parent.height
                 visible: Plasmoid.configuration.showNetworkRate && fits
+            }
+
+            TokenUsage {
+                id: tokenUsage
+
+                width: implicitWidth
+                height: parent.height
+                claudeContextWindow: Plasmoid.configuration.claudeContextWindow
+                showCodex: Plasmoid.configuration.showCodexTokenUsage
+                showClaude: Plasmoid.configuration.showClaudeTokenUsage
+                showDaily: Plasmoid.configuration.showDailyTokenUsage
+                visible: showCodex || showClaude || showDaily
             }
         }
 

@@ -17,14 +17,20 @@ check:
 		$(PACKAGE_DIR)/contents/ui/CpuTemperature.qml \
 		$(PACKAGE_DIR)/contents/ui/UsagePie.qml \
 		$(PACKAGE_DIR)/contents/ui/NetworkRate.qml \
+		$(PACKAGE_DIR)/contents/ui/TokenUsage.qml \
+		$(PACKAGE_DIR)/contents/ui/TokenRing.qml \
 		$(PACKAGE_DIR)/contents/ui/NetworkStats.qml \
 		$(PACKAGE_DIR)/contents/ui/config/ConfigBehavior.qml \
 		$(PACKAGE_DIR)/contents/config/config.qml \
 		tests/tst_animation.qml \
 		tests/tst_runners.qml \
 		tests/tst_sensors.qml
+	PYTHONPYCACHEPREFIX=/tmp/kde-runcat-pycache \
+		python3 -m py_compile $(PACKAGE_DIR)/contents/code/token_usage.py
 
 test:
+	PYTHONPYCACHEPREFIX=/tmp/kde-runcat-pycache \
+		python3 -m unittest tests/test_token_usage.py
 	QT_QPA_PLATFORM=offscreen $(QMLTESTRUNNER) \
 		-input tests -import /usr/lib/qt6/qml
 

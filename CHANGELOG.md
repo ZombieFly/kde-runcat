@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Optional, independently configurable Codex and Claude Code context rings
+  with brand marks, plus a two-line component for today's local token totals;
+  all token indicators are disabled by default.
+
 ## [0.3.0] - 2026-08-05
 
 ### Added

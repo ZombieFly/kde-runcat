@@ -32,6 +32,14 @@ KCM.SimpleKCM {
     property bool cfg_showDiskUsageDefault
     property alias cfg_showNetworkRate: showNetworkRate.checked
     property bool cfg_showNetworkRateDefault
+    property alias cfg_showCodexTokenUsage: showCodexTokenUsage.checked
+    property bool cfg_showCodexTokenUsageDefault
+    property alias cfg_showClaudeTokenUsage: showClaudeTokenUsage.checked
+    property bool cfg_showClaudeTokenUsageDefault
+    property alias cfg_showDailyTokenUsage: showDailyTokenUsage.checked
+    property bool cfg_showDailyTokenUsageDefault
+    property alias cfg_claudeContextWindow: claudeContextWindow.value
+    property int cfg_claudeContextWindowDefault
     property alias cfg_indicatorSpacing: indicatorSpacing.value
     property int cfg_indicatorSpacingDefault
     property alias cfg_reverseSpeed: reverseSpeed.checked
@@ -113,6 +121,37 @@ KCM.SimpleKCM {
         CheckBox {
             id: showNetworkRate
             text: i18n("Show network rate next to the runner")
+        }
+
+        CheckBox {
+            id: showCodexTokenUsage
+            text: i18n("Show Codex context ring")
+        }
+
+        CheckBox {
+            id: showClaudeTokenUsage
+            text: i18n("Show Claude Code context ring")
+        }
+
+        CheckBox {
+            id: showDailyTokenUsage
+            text: i18n("Show today's Codex and Claude Code token usage")
+        }
+
+        SpinBox {
+            id: claudeContextWindow
+
+            from: 10000
+            to: 2000000
+            stepSize: 10000
+            enabled: showClaudeTokenUsage.checked
+            Kirigami.FormData.label: i18n("Claude context window:")
+            textFromValue: function(value) {
+                return i18n("%1K tokens", Math.round(value / 1000));
+            }
+            valueFromText: function(text) {
+                return Math.max(10000, parseInt(text, 10) * 1000);
+            }
         }
 
         SpinBox {

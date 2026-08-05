@@ -1,2 +1,4 @@
 /build/
 *.plasmoid
+__pycache__/
+*.py[cod]
