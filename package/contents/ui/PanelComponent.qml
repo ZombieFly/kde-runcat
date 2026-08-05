@@ -20,6 +20,7 @@ Item {
     required property bool sensorReady
     required property real cpuTemperature
     required property bool temperatureReady
+    required property var metrics
     property bool vertical: false
     property real contentSpacing: Kirigami.Units.smallSpacing
     readonly property real resourceRingSize: Math.round(
@@ -287,11 +288,13 @@ Item {
         ResourceRing {
             ringSize: root.resourceRingSize
             title: i18n("Memory Usage")
-            usageSensorId: "memory/physical/usedPercent"
-            usedSensorId: "memory/physical/used"
-            totalSensorId: "memory/physical/total"
             iconName: "memory"
             color: "#3daee9"
+            usage: root.metrics.memoryUsage
+            usedText: root.metrics.memoryUsed
+            totalText: root.metrics.memoryTotal
+            usageAvailable: root.metrics.memoryUsageAvailable
+            detailAvailable: root.metrics.memoryDetailAvailable
             showText: Boolean(root.componentSettings.showText)
             spacing: root.contentSpacing
         }
@@ -303,11 +306,13 @@ Item {
         ResourceRing {
             ringSize: root.resourceRingSize
             title: i18n("Disk Usage")
-            usageSensorId: "disk/all/usedPercent"
-            usedSensorId: "disk/all/used"
-            totalSensorId: "disk/all/total"
             iconName: "drive-harddisk-symbolic"
             color: "#27ae60"
+            usage: root.metrics.diskUsage
+            usedText: root.metrics.diskUsed
+            totalText: root.metrics.diskTotal
+            usageAvailable: root.metrics.diskUsageAvailable
+            detailAvailable: root.metrics.diskDetailAvailable
             showText: Boolean(root.componentSettings.showText)
             spacing: root.contentSpacing
         }
@@ -316,7 +321,12 @@ Item {
     Component {
         id: networkComponent
 
-        NetworkRate {}
+        NetworkRate {
+            downloadRate: root.metrics.downloadRate
+            uploadRate: root.metrics.uploadRate
+            downloadAvailable: root.metrics.downloadAvailable
+            uploadAvailable: root.metrics.uploadAvailable
+        }
     }
 
     Component {
@@ -328,6 +338,15 @@ Item {
             )
             showCodex: Boolean(root.componentSettings.showCodex)
             showClaude: Boolean(root.componentSettings.showClaude)
+            codexTodayTokens: root.metrics.codexTodayTokens
+            codexContextTokens: root.metrics.codexContextTokens
+            codexContextWindow: root.metrics.codexContextWindow
+            claudeTodayTokens: root.metrics.claudeTodayTokens
+            claudeContextTokens: root.metrics.claudeContextTokens
+            codexAvailable: root.metrics.codexAvailable
+            claudeAvailable: root.metrics.claudeAvailable
+            codexUpdatedAt: root.metrics.codexUpdatedAt
+            claudeUpdatedAt: root.metrics.claudeUpdatedAt
         }
     }
 }

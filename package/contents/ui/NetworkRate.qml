@@ -4,20 +4,20 @@ import QtQuick
 import QtQuick.Controls as QQC2
 
 import org.kde.kirigami as Kirigami
-import org.kde.ksysguard.sensors as Sensors
 
 Item {
     id: root
 
+    required property string downloadRate
+    required property string uploadRate
+    required property bool downloadAvailable
+    required property bool uploadAvailable
+
     readonly property bool fits: height >= rates.implicitHeight
-    readonly property string downloadText: downloadSensor.status
-        === Sensors.Sensor.Ready
-        ? downloadSensor.formattedValue
-        : i18n("Unavailable")
-    readonly property string uploadText: uploadSensor.status
-        === Sensors.Sensor.Ready
-        ? uploadSensor.formattedValue
-        : i18n("Unavailable")
+    readonly property string downloadText: downloadAvailable
+        ? downloadRate : i18n("Unavailable")
+    readonly property string uploadText: uploadAvailable
+        ? uploadRate : i18n("Unavailable")
 
     implicitWidth: Kirigami.Units.gridUnit * 4
     implicitHeight: rates.implicitHeight
@@ -26,22 +26,6 @@ Item {
         downloadText,
         uploadText
     )
-
-    Sensors.Sensor {
-        id: downloadSensor
-
-        sensorId: "network/all/download"
-        enabled: root.visible
-        updateRateLimit: 1000
-    }
-
-    Sensors.Sensor {
-        id: uploadSensor
-
-        sensorId: "network/all/upload"
-        enabled: root.visible
-        updateRateLimit: 1000
-    }
 
     Column {
         id: rates

@@ -12,6 +12,7 @@ check:
 	find $(PACKAGE_DIR)/contents/images -name '*.svg' -exec xmllint --noout {} +
 	$(QMLLINT) -I /usr/lib/qt6/qml \
 		$(PACKAGE_DIR)/contents/ui/main.qml \
+		$(PACKAGE_DIR)/contents/ui/MetricsProvider.qml \
 		$(PACKAGE_DIR)/contents/ui/PanelComponent.qml \
 		$(PACKAGE_DIR)/contents/ui/ResourceRing.qml \
 		$(PACKAGE_DIR)/contents/ui/NetworkRate.qml \
@@ -21,6 +22,7 @@ check:
 		$(PACKAGE_DIR)/contents/config/config.qml \
 		tests/tst_animation.qml \
 		tests/tst_components.qml \
+		tests/tst_metrics_provider.qml \
 		tests/tst_panel_component.qml \
 		tests/tst_runners.qml \
 		tests/tst_sensors.qml \

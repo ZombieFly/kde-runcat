@@ -28,6 +28,18 @@ PlasmoidItem {
     readonly property var runnerComponent: Components.find(
         panelComponents, "runner"
     )
+    readonly property var memoryComponent: Components.find(
+        panelComponents, "memory"
+    )
+    readonly property var diskComponent: Components.find(
+        panelComponents, "disk"
+    )
+    readonly property var networkComponent: Components.find(
+        panelComponents, "network"
+    )
+    readonly property var aiComponent: Components.find(
+        panelComponents, "ai"
+    )
     readonly property bool cpuTemperatureEnabled: runnerComponent
         && Boolean(runnerComponent.settings.showCpuTemperature)
 
@@ -156,6 +168,7 @@ PlasmoidItem {
                     sensorReady: root.sensorReady
                     cpuTemperature: root.cpuTemperature
                     temperatureReady: root.temperatureReady
+                    metrics: metricsProvider
                     vertical: root.vertical
                     contentSpacing: root.componentSpacing
                     width: implicitWidth
@@ -172,6 +185,24 @@ PlasmoidItem {
     // representation is never activated; it only keeps Plasma's compact
     // representation layout valid after a shell restart.
     fullRepresentation: Item {}
+
+    // Keep subscriptions outside compactRepresentation. Plasma may recreate
+    // that representation while the settings dialog is open; the provider
+    // must outlive those display-only items so their teardown cannot cancel
+    // active sensor subscriptions.
+    MetricsProvider {
+        id: metricsProvider
+
+        memoryEnabled: Boolean(root.memoryComponent)
+        diskEnabled: Boolean(root.diskComponent)
+        networkEnabled: Boolean(root.networkComponent)
+        tokenUsageEnabled: Boolean(root.aiComponent)
+            && (Boolean(root.aiComponent.settings.showCodex)
+                || Boolean(root.aiComponent.settings.showClaude))
+        claudeContextWindow: root.aiComponent
+            ? Number(root.aiComponent.settings.claudeContextWindow || 200000)
+            : 200000
+    }
 
     Sensors.SensorTreeModel { id: sensorTreeModel }
 

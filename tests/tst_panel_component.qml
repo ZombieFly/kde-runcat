@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtTest
 
@@ -8,6 +10,32 @@ TestCase {
 
     name: "PanelComponent"
     when: windowShown
+
+    readonly property var metrics: ({
+        memoryUsage: 42,
+        memoryUsed: "12 GiB",
+        memoryTotal: "32 GiB",
+        memoryUsageAvailable: true,
+        memoryDetailAvailable: true,
+        diskUsage: 30,
+        diskUsed: "150 GiB",
+        diskTotal: "500 GiB",
+        diskUsageAvailable: true,
+        diskDetailAvailable: true,
+        downloadRate: "1 MiB/s",
+        uploadRate: "100 KiB/s",
+        downloadAvailable: true,
+        uploadAvailable: true,
+        codexTodayTokens: 1000,
+        codexContextTokens: 2000,
+        codexContextWindow: 100000,
+        claudeTodayTokens: 3000,
+        claudeContextTokens: 4000,
+        codexAvailable: true,
+        claudeAvailable: true,
+        codexUpdatedAt: "2026-08-05T12:00:00+08:00",
+        claudeUpdatedAt: "2026-08-05T12:00:00+08:00"
+    })
 
     Component {
         id: panelComponentFactory
@@ -27,6 +55,7 @@ TestCase {
             sensorReady: true
             cpuTemperature: 55
             temperatureReady: true
+            metrics: testCase.metrics
             height: 32
         }
     }
@@ -42,6 +71,7 @@ TestCase {
             sensorReady: true
             cpuTemperature: 55
             temperatureReady: true
+            metrics: testCase.metrics
             height: 64
         }
     }
@@ -57,6 +87,7 @@ TestCase {
             sensorReady: true
             cpuTemperature: 55
             temperatureReady: true
+            metrics: testCase.metrics
             height: 32
         }
     }
@@ -77,6 +108,7 @@ TestCase {
             sensorReady: true
             cpuTemperature: 55
             temperatureReady: true
+            metrics: testCase.metrics
             height: 32
         }
     }
@@ -92,6 +124,7 @@ TestCase {
             sensorReady: true
             cpuTemperature: 0
             temperatureReady: false
+            metrics: testCase.metrics
             height: 32
         }
     }
@@ -107,6 +140,7 @@ TestCase {
             sensorReady: true
             cpuTemperature: 0
             temperatureReady: false
+            metrics: testCase.metrics
             height: 32
         }
     }

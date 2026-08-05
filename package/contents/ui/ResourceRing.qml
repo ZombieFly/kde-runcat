@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Controls as QQC2
 
 import org.kde.kirigami as Kirigami
-import org.kde.ksysguard.sensors as Sensors
 import org.kde.quickcharts as Charts
 
 Item {
@@ -12,34 +11,25 @@ Item {
 
     required property real ringSize
     required property string title
-    required property string usageSensorId
-    required property string usedSensorId
-    required property string totalSensorId
     required property string iconName
     required property color color
+    required property real usage
+    required property string usedText
+    required property string totalText
+    required property bool usageAvailable
+    required property bool detailAvailable
     property bool showText: false
     property real spacing: Kirigami.Units.smallSpacing
 
-    readonly property real usageValue: Number(usageSensor.value)
-    readonly property bool usageAvailable:
-        usageSensor.status === Sensors.Sensor.Ready
-        && Number.isFinite(usageValue)
-    readonly property real usage: usageAvailable
-        ? Math.max(0, Math.min(100, usageValue)) : 0
-    readonly property bool detailAvailable:
-        usedSensor.status === Sensors.Sensor.Ready
-        && totalSensor.status === Sensors.Sensor.Ready
-        && String(usedSensor.formattedValue || "").length > 0
-        && String(totalSensor.formattedValue || "").length > 0
-    readonly property string usedText: detailAvailable
-        ? usedSensor.formattedValue : i18n("Unavailable")
-    readonly property string totalText: detailAvailable
-        ? totalSensor.formattedValue : i18n("Unavailable")
+    readonly property string shownUsedText: detailAvailable
+        && usedText.length > 0 ? usedText : i18n("Unavailable")
+    readonly property string shownTotalText: detailAvailable
+        && totalText.length > 0 ? totalText : i18n("Unavailable")
     readonly property string detailText: detailAvailable
         ? i18n(
             "%1 / %2",
-            usedText,
-            totalText
+            shownUsedText,
+            shownTotalText
         )
         : i18n("Unavailable")
     readonly property string accessibleText: usageAvailable
@@ -58,38 +48,14 @@ Item {
         id: usedTextMetrics
 
         font: Kirigami.Theme.smallFont
-        text: root.usedText
+        text: root.shownUsedText
     }
 
     TextMetrics {
         id: totalTextMetrics
 
         font: Kirigami.Theme.smallFont
-        text: root.totalText
-    }
-
-    Sensors.Sensor {
-        id: usageSensor
-
-        sensorId: root.usageSensorId
-        enabled: root.visible
-        updateRateLimit: 1000
-    }
-
-    Sensors.Sensor {
-        id: usedSensor
-
-        sensorId: root.usedSensorId
-        enabled: root.visible
-        updateRateLimit: 1000
-    }
-
-    Sensors.Sensor {
-        id: totalSensor
-
-        sensorId: root.totalSensorId
-        enabled: root.visible
-        updateRateLimit: 1000
+        text: root.shownTotalText
     }
 
     Row {
@@ -146,7 +112,7 @@ Item {
                 width: parent.width
                 font: Kirigami.Theme.smallFont
                 elide: Text.ElideRight
-                text: root.usedText
+                text: root.shownUsedText
             }
 
             QQC2.Label {
@@ -154,7 +120,7 @@ Item {
                 font: Kirigami.Theme.smallFont
                 elide: Text.ElideRight
                 opacity: 0.7
-                text: root.totalText
+                text: root.shownTotalText
             }
         }
     }

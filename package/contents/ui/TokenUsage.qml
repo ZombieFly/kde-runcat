@@ -4,25 +4,24 @@ import QtQuick
 import QtQuick.Controls as QQC2
 
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.plasma5support as Plasma5Support
 
 import "../code/token_format.js" as TokenFormat
 
 Item {
     id: root
 
-    property int claudeContextWindow: 200000
     property bool showCodex: true
     property bool showClaude: true
-    property int codexTodayTokens: 0
-    property int codexContextTokens: 0
-    property int codexContextWindow: 0
-    property int claudeTodayTokens: 0
-    property int claudeContextTokens: 0
-    property bool codexAvailable: false
-    property bool claudeAvailable: false
-    property string codexUpdatedAt: ""
-    property string claudeUpdatedAt: ""
+    required property int codexTodayTokens
+    required property int codexContextTokens
+    required property int codexContextWindow
+    required property int claudeTodayTokens
+    required property int claudeContextTokens
+    required property int claudeContextWindow
+    required property bool codexAvailable
+    required property bool claudeAvailable
+    required property string codexUpdatedAt
+    required property string claudeUpdatedAt
 
     readonly property real gaugeSize: Math.round(
         Math.min(height, Kirigami.Units.iconSizes.medium) * 0.9
@@ -33,42 +32,11 @@ Item {
     readonly property real claudePercent: contextPercent(
         claudeContextTokens, claudeContextWindow
     )
-    readonly property string scriptPath: decodeURIComponent(
-        Qt.resolvedUrl("../code/token_usage.py").toString()
-            .replace(/^file:\/\//, "")
-    )
-    readonly property string command: "/usr/bin/python3 "
-        + shellQuote(scriptPath)
-        + " --claude-context-window " + claudeContextWindow
-
-    function shellQuote(value) {
-        return "'" + value.replace(/'/g, "'\\''") + "'";
-    }
-
     function contextPercent(tokens, windowTokens) {
         if (windowTokens <= 0) {
             return 0;
         }
         return Math.max(0, Math.min(100, tokens / windowTokens * 100));
-    }
-
-    function updateUsage(rawOutput) {
-        try {
-            const value = JSON.parse(String(rawOutput).trim());
-            const codex = value.codex || {};
-            const claude = value.claude || {};
-            codexAvailable = Boolean(codex.available);
-            codexTodayTokens = Number(codex.todayTokens) || 0;
-            codexContextTokens = Number(codex.contextTokens) || 0;
-            codexContextWindow = Number(codex.contextWindow) || 0;
-            codexUpdatedAt = String(codex.updatedAt || "");
-            claudeAvailable = Boolean(claude.available);
-            claudeTodayTokens = Number(claude.todayTokens) || 0;
-            claudeContextTokens = Number(claude.contextTokens) || 0;
-            claudeUpdatedAt = String(claude.updatedAt || "");
-        } catch (error) {
-            console.warn("RunCat could not parse token usage:", error);
-        }
     }
 
     implicitWidth: indicators.implicitWidth
@@ -80,21 +48,6 @@ Item {
         claudeTodayTokens,
         Math.round(claudePercent)
     )
-
-    Plasma5Support.DataSource {
-        id: tokenSource
-
-        engine: "executable"
-        connectedSources: root.visible ? [root.command] : []
-        interval: 30000
-
-        onNewData: function(sourceName, data) {
-            if (sourceName === root.command
-                    && Number(data["exit code"]) === 0) {
-                root.updateUsage(data["stdout"]);
-            }
-        }
-    }
 
     Row {
         id: indicators
