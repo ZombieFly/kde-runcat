@@ -54,28 +54,11 @@ make package
 `make package` creates `build/com.github.runcatkde.runcat.plasmoid` for manual
 installation or distribution.
 
-Choose from eight bundled runners in the behavior settings; the cat remains the
-default. The CPU sensor is sampled at most once per second. An exponentially
-weighted moving average prevents brief spikes from making the animation jitter.
-CPU sampling and frame animation use separate clocks, and the configured FPS
-limit caps rendering work at high load. A single running-speed percentage scales
-the full animation speed range while the timing and smoothing details use
-sensible defaults. The behavior settings can optionally show the current CPU
-percentage to the right of the runner. They can also show memory and disk usage
-as optional pies next to it: memory is blue and disk is green. Download and
-upload rates can additionally be shown as two compact lines on the right, using
-cyan for download and purple for upload. The network display is omitted when
-the panel is too short to fit both lines. All indicators are disabled by
-default. The spacing between the runner and each enabled indicator is also
-configurable and defaults to 8 pixels. The settings can reverse the speed
-response so the runner moves faster at low CPU usage and slower at high CPU
-usage.
-
-Clicking the runner opens a Plasma dashboard with CPU, GPU, memory, disk, and
-network activity. The dashboard uses Kirigami and KQuickCharts so its colors,
-fonts, and spacing follow the active Plasma theme. GPU and temperature sensors
-are discovered at runtime and are shown as unavailable when the hardware or
-driver does not expose them through `ksystemstats`.
+RunCat samples Plasma system-monitor sensors without a background daemon and
+smooths CPU data to keep animation stable. Behavior settings control the runner,
+speed response, and optional panel indicators for CPU, memory, disk, and network
+activity. Clicking the runner opens the full system dashboard; unavailable
+hardware sensors are handled automatically.
 
 ## License
 
