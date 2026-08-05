@@ -22,7 +22,9 @@ check:
 		tests/tst_animation.qml \
 		tests/tst_components.qml \
 		tests/tst_panel_component.qml \
-		tests/tst_runners.qml
+		tests/tst_runners.qml \
+		tests/tst_sensors.qml \
+		tests/tst_temperature.qml
 	PYTHONPYCACHEPREFIX=/tmp/kde-runcat-pycache \
 		python3 -m py_compile $(PACKAGE_DIR)/contents/code/token_usage.py
 

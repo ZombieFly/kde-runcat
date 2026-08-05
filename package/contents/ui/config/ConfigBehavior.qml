@@ -33,6 +33,8 @@ KCM.ScrollViewKCM {
     property bool cfg_flipHorizontallyDefault
     property bool cfg_showCpuUsage
     property bool cfg_showCpuUsageDefault
+    property bool cfg_showCpuTemperature
+    property bool cfg_showCpuTemperatureDefault
     property bool cfg_showMemoryUsage
     property bool cfg_showMemoryUsageDefault
     property bool cfg_showDiskUsage
@@ -110,6 +112,7 @@ KCM.ScrollViewKCM {
                 flipHorizontally: cfg_flipHorizontally,
                 reverseSpeed: cfg_reverseSpeed,
                 showCpuUsage: cfg_showCpuUsage,
+                showCpuTemperature: cfg_showCpuTemperature,
                 showMemoryUsage: cfg_showMemoryUsage,
                 showDiskUsage: cfg_showDiskUsage,
                 showNetworkRate: cfg_showNetworkRate,
@@ -134,8 +137,8 @@ KCM.ScrollViewKCM {
         if (cfg_components !== serialized) {
             cfg_components = serialized;
         }
-        if (cfg_componentConfigVersion !== 3) {
-            cfg_componentConfigVersion = 3;
+        if (cfg_componentConfigVersion !== 4) {
+            cfg_componentConfigVersion = 4;
         }
     }
 
@@ -179,8 +182,8 @@ KCM.ScrollViewKCM {
         if (cfg_components !== serialized) {
             cfg_components = serialized;
         }
-        if (cfg_componentConfigVersion !== 3) {
-            cfg_componentConfigVersion = 3;
+        if (cfg_componentConfigVersion !== 4) {
+            cfg_componentConfigVersion = 4;
         }
     }
 
@@ -432,6 +435,29 @@ KCM.ScrollViewKCM {
                                     card.index, "showCpuUsage", checked
                                 )
                             }
+                            CheckBox {
+                                id: temperatureCheck
+                                text: i18n("Show CPU temperature")
+                                checked: Boolean(
+                                    card.settings.showCpuTemperature
+                                )
+                                onClicked: root.updateSetting(
+                                    card.index, "showCpuTemperature", checked
+                                )
+                            }
+                        }
+
+                        Label { text: i18n("Temperature unit:") }
+                        ComboBox {
+                            enabled: temperatureCheck.checked
+                            model: [i18n("Celsius (°C)"), i18n("Fahrenheit (°F)")]
+                            currentIndex: card.settings.temperatureUnit
+                                === "fahrenheit" ? 1 : 0
+                            onActivated: root.updateSetting(
+                                card.index,
+                                "temperatureUnit",
+                                currentIndex === 1 ? "fahrenheit" : "celsius"
+                            )
                         }
                     }
 

@@ -8,6 +8,7 @@ import org.kde.kirigami as Kirigami
 
 import "../code/animation.js" as Animation
 import "../code/runners.js" as RunnerSelection
+import "../code/temperature.js" as Temperature
 
 Item {
     id: root
@@ -17,6 +18,8 @@ Item {
     required property real cpuUsage
     required property real smoothedCpu
     required property bool sensorReady
+    required property real cpuTemperature
+    required property bool temperatureReady
     property bool vertical: false
     property real contentSpacing: Kirigami.Units.smallSpacing
     readonly property real resourceRingSize: Math.round(
@@ -36,13 +39,31 @@ Item {
     readonly property real runnerImplicitHeight: vertical
         ? Math.round(Kirigami.Units.iconSizes.medium / runnerAspectRatio)
         : Kirigami.Units.iconSizes.medium
+    readonly property bool showCpuTemperature: componentType === "runner"
+        && Boolean(componentSettings.showCpuTemperature)
+    readonly property string temperatureUnit: Temperature.normalizeUnit(
+        String(componentSettings.temperatureUnit || "celsius")
+    )
+    readonly property string temperatureText: temperatureReady
+        ? Temperature.format(cpuTemperature, temperatureUnit)
+        : Temperature.unavailable(temperatureUnit)
+    readonly property bool temperatureIsCool: temperatureReady
+        && cpuTemperature <= 50
+    readonly property color temperatureColor: !temperatureReady
+        || temperatureIsCool
+        ? Kirigami.Theme.textColor
+        : Temperature.color(cpuTemperature)
+    readonly property real runnerInfoWidth: Math.ceil(Math.max(
+        Boolean(componentSettings.showCpuUsage) ? cpuMetrics.advanceWidth : 0,
+        showCpuTemperature ? temperatureMetrics.advanceWidth : 0
+    ))
 
     implicitWidth: {
         switch (componentType) {
         case "runner":
             return runnerImplicitWidth
-                + (Boolean(componentSettings.showCpuUsage)
-                    ? contentSpacing + cpuMetrics.advanceWidth : 0);
+                + (runnerInfoWidth > 0
+                    ? contentSpacing + runnerInfoWidth : 0);
         case "memory":
         case "disk":
             return componentLoader.item
@@ -62,9 +83,17 @@ Item {
     TextMetrics {
         id: cpuMetrics
 
-        font: Kirigami.Theme.defaultFont
+        font: root.showCpuTemperature
+            ? Kirigami.Theme.smallFont : Kirigami.Theme.defaultFont
         // This is only a width sentinel, not user-facing text.
         text: "100%"
+    }
+
+    TextMetrics {
+        id: temperatureMetrics
+
+        font: Kirigami.Theme.smallFont
+        text: root.temperatureUnit === "fahrenheit" ? "212°F" : "100°C"
     }
 
     Loader {
@@ -97,7 +126,7 @@ Item {
                 anchors.centerIn: parent
                 width: implicitWidth
                 height: Math.min(parent.height, root.runnerImplicitHeight)
-                spacing: cpuLabel.visible ? root.contentSpacing : 0
+                spacing: runnerInfo.visible ? root.contentSpacing : 0
 
                 Item {
                     id: runner
@@ -194,16 +223,39 @@ Item {
                     }
                 }
 
-                QQC2.Label {
-                    id: cpuLabel
+                Column {
+                    id: runnerInfo
 
-                    width: visible ? cpuMetrics.advanceWidth : 0
-                    height: parent.height
-                    visible: Boolean(root.componentSettings.showCpuUsage)
-                    text: root.sensorReady
-                        ? i18n("%1%", Math.round(root.cpuUsage)) : i18n("--%")
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignRight
+                    width: visible ? root.runnerInfoWidth : 0
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 0
+                    visible: cpuLabel.visible || temperatureLabel.visible
+
+                    QQC2.Label {
+                        id: cpuLabel
+
+                        width: parent.width
+                        visible: Boolean(root.componentSettings.showCpuUsage)
+                        font: root.showCpuTemperature
+                            ? Kirigami.Theme.smallFont
+                            : Kirigami.Theme.defaultFont
+                        text: root.sensorReady
+                            ? i18n("%1%", Math.round(root.cpuUsage))
+                            : i18n("--%")
+                        horizontalAlignment: Text.AlignRight
+                    }
+
+                    QQC2.Label {
+                        id: temperatureLabel
+
+                        width: parent.width
+                        visible: root.showCpuTemperature
+                        font: Kirigami.Theme.smallFont
+                        text: root.temperatureText
+                        color: root.temperatureColor
+                        opacity: root.temperatureIsCool ? 0.7 : 1
+                        horizontalAlignment: Text.AlignRight
+                    }
                 }
             }
         }

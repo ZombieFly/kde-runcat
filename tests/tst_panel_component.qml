@@ -25,6 +25,8 @@ TestCase {
             cpuUsage: 42
             smoothedCpu: 42
             sensorReady: true
+            cpuTemperature: 55
+            temperatureReady: true
             height: 32
         }
     }
@@ -38,6 +40,8 @@ TestCase {
             cpuUsage: 0
             smoothedCpu: 0
             sensorReady: true
+            cpuTemperature: 55
+            temperatureReady: true
             height: 64
         }
     }
@@ -51,6 +55,28 @@ TestCase {
             cpuUsage: 42
             smoothedCpu: 42
             sensorReady: true
+            cpuTemperature: 55
+            temperatureReady: true
+            height: 32
+        }
+    }
+
+    Component {
+        id: temperatureRunnerFactory
+
+        PanelComponent {
+            componentType: "runner"
+            componentSettings: ({
+                runner: "cat",
+                showCpuUsage: true,
+                showCpuTemperature: true,
+                temperatureUnit: "celsius"
+            })
+            cpuUsage: 42
+            smoothedCpu: 42
+            sensorReady: true
+            cpuTemperature: 55
+            temperatureReady: true
             height: 32
         }
     }
@@ -64,6 +90,8 @@ TestCase {
             cpuUsage: 0
             smoothedCpu: 0
             sensorReady: true
+            cpuTemperature: 0
+            temperatureReady: false
             height: 32
         }
     }
@@ -77,6 +105,8 @@ TestCase {
             cpuUsage: 0
             smoothedCpu: 0
             sensorReady: true
+            cpuTemperature: 0
+            temperatureReady: false
             height: 32
         }
     }
@@ -109,6 +139,21 @@ TestCase {
         verify(withCpu !== null);
         verify(withCpu.implicitWidth > runnerOnly.implicitWidth);
         compare(withCpu.implicitHeight, runnerOnly.implicitHeight);
+    }
+
+    function test_temperature_text_stacks_without_growing_runner() {
+        const withCpu = createTemporaryObject(
+            cpuUsageRunnerFactory, testCase
+        );
+        const withTemperature = createTemporaryObject(
+            temperatureRunnerFactory, testCase
+        );
+        verify(withCpu !== null);
+        verify(withTemperature !== null);
+        compare(withTemperature.implicitHeight, withCpu.implicitHeight);
+        verify(withTemperature.implicitWidth >= withCpu.implicitWidth);
+        compare(withTemperature.temperatureText, "55°C");
+        compare(withTemperature.temperatureColor.toString(), "#f67400");
     }
 
     function test_resource_text_adds_width_without_growing_ring() {

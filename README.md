@@ -48,6 +48,9 @@ remove, configure, and reorder memory, disk, network, and AI indicators. AI
 usage is read locally from Codex and Claude Code session logs;
 no credentials or prompts are sent anywhere.
 
+The Runner can optionally show CPU usage and a color-coded CPU temperature in
+Celsius or Fahrenheit.
+
 ## Development
 
 Development requires `jq`, `xmllint`, Qt's QML tools, and `zip`.

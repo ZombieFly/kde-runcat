@@ -13,6 +13,8 @@ TestCase {
         compare(value[0].settings.runner, "cat");
         compare(value[0].settings.speedPercent, 100);
         compare(value[0].settings.showCpuUsage, false);
+        compare(value[0].settings.showCpuTemperature, false);
+        compare(value[0].settings.temperatureUnit, "celsius");
     }
 
     function test_resource_components_hide_text_by_default() {
@@ -127,6 +129,22 @@ TestCase {
         ]);
         compare(value.length, 2);
         compare(value[0].type, "runner");
+        compare(value[0].settings.showCpuTemperature, true);
         compare(value[1].type, "memory");
+    }
+
+    function test_runner_normalizes_temperature_settings() {
+        const fahrenheit = Components.normalize([{
+            type: "runner",
+            settings: {showCpuTemperature: true, temperatureUnit: "fahrenheit"}
+        }]);
+        compare(fahrenheit[0].settings.showCpuTemperature, true);
+        compare(fahrenheit[0].settings.temperatureUnit, "fahrenheit");
+
+        const invalid = Components.normalize([{
+            type: "runner",
+            settings: {temperatureUnit: "kelvin"}
+        }]);
+        compare(invalid[0].settings.temperatureUnit, "celsius");
     }
 }

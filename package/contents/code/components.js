@@ -16,7 +16,9 @@ function defaultSettings(type) {
             speedPercent: 100,
             flipHorizontally: false,
             reverseSpeed: false,
-            showCpuUsage: false
+            showCpuUsage: false,
+            showCpuTemperature: false,
+            temperatureUnit: "celsius"
         };
     case "ai":
         return {
@@ -66,7 +68,12 @@ function normalizedSettings(type, source) {
             reverseSpeed: value.reverseSpeed === undefined
                 ? defaults.reverseSpeed : Boolean(value.reverseSpeed),
             showCpuUsage: value.showCpuUsage === undefined
-                ? defaults.showCpuUsage : Boolean(value.showCpuUsage)
+                ? defaults.showCpuUsage : Boolean(value.showCpuUsage),
+            showCpuTemperature: value.showCpuTemperature === undefined
+                ? defaults.showCpuTemperature
+                : Boolean(value.showCpuTemperature),
+            temperatureUnit: value.temperatureUnit === "fahrenheit"
+                ? "fahrenheit" : defaults.temperatureUnit
         };
     }
 
@@ -126,16 +133,22 @@ function normalize(value) {
     const hasLegacyCpu = source.some(function(item) {
         return item && String(item.type || "") === "cpu";
     });
+    const hasLegacyTemperature = source.some(function(item) {
+        return item && String(item.type || "") === "cpuTemperature";
+    });
     const hasRunner = source.some(function(item) {
         return item && String(item.type || "") === "runner";
     });
     for (let index = 0; index < source.length; ++index) {
         const item = source[index];
         const type = item && String(item.type || "");
-        if (type === "cpu") {
+        if (type === "cpu" || type === "cpuTemperature") {
             if (!hasRunner && !seen.runner) {
                 seen.runner = true;
-                result.push(definition("runner", {showCpuUsage: true}));
+                result.push(definition("runner", {
+                    showCpuUsage: hasLegacyCpu,
+                    showCpuTemperature: hasLegacyTemperature
+                }));
             }
             continue;
         }
@@ -143,9 +156,14 @@ function normalize(value) {
             continue;
         }
         seen[type] = true;
-        if (type === "runner" && hasLegacyCpu) {
+        if (type === "runner" && (hasLegacyCpu || hasLegacyTemperature)) {
             const settings = Object.assign({}, item.settings || {});
-            settings.showCpuUsage = true;
+            if (hasLegacyCpu) {
+                settings.showCpuUsage = true;
+            }
+            if (hasLegacyTemperature) {
+                settings.showCpuTemperature = true;
+            }
             result.push(definition(type, settings));
         } else {
             result.push(definition(type, item.settings));
@@ -176,7 +194,9 @@ function migrateLegacy(configuration) {
         speedPercent: configuration.speedPercent,
         flipHorizontally: configuration.flipHorizontally,
         reverseSpeed: configuration.reverseSpeed,
-        showCpuUsage: configuration.showCpuUsage
+        showCpuUsage: configuration.showCpuUsage,
+        showCpuTemperature: configuration.showCpuTemperature,
+        temperatureUnit: "celsius"
     })];
     if (configuration.showMemoryUsage) {
         result.push(definition("memory", {}));

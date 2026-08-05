@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 
+import org.kde.kitemmodels as KItemModels
 import org.kde.kirigami as Kirigami
 import org.kde.ksysguard.sensors as Sensors
 import org.kde.plasma.core as PlasmaCore
@@ -10,6 +11,7 @@ import org.kde.plasma.plasmoid
 
 import "../code/animation.js" as Animation
 import "../code/components.js" as Components
+import "../code/sensors.js" as SensorSelection
 
 PlasmoidItem {
     id: root
@@ -23,10 +25,18 @@ PlasmoidItem {
     readonly property int componentSpacing: Math.max(
         0, Math.min(24, Number(Plasmoid.configuration.indicatorSpacing))
     )
+    readonly property var runnerComponent: Components.find(
+        panelComponents, "runner"
+    )
+    readonly property bool cpuTemperatureEnabled: runnerComponent
+        && Boolean(runnerComponent.settings.showCpuTemperature)
 
     property real smoothedCpu: 0
     property real cpuUsage: 0
     property bool sensorReady: false
+    property string cpuTemperatureSensorId: ""
+    property real cpuTemperature: 0
+    property bool temperatureReady: false
 
     function updateCpu(rawValue) {
         const value = Number(rawValue);
@@ -43,8 +53,40 @@ PlasmoidItem {
         smoothedCpu = Animation.smooth(smoothedCpu, bounded, defaultSmoothing);
     }
 
+    function updateCpuTemperature(rawValue) {
+        const value = Number(rawValue);
+        if (!Number.isFinite(value)) {
+            temperatureReady = false;
+            return;
+        }
+        cpuTemperature = value;
+        temperatureReady = true;
+    }
+
+    function discoverCpuTemperatureSensor() {
+        let bestId = "";
+        let bestScore = -1;
+        for (let row = 0; row < flatSensorModel.rowCount(); ++row) {
+            const index = flatSensorModel.index(row, 0);
+            const sensorId = String(flatSensorModel.data(
+                index, Sensors.SensorTreeModel.SensorId
+            ) || "");
+            if (sensorId.length === 0) continue;
+            const name = String(flatSensorModel.data(index, Qt.DisplayRole) || "");
+            const score = SensorSelection.cpuTemperatureSensorScore(
+                sensorId, name
+            );
+            if (score > bestScore) {
+                bestScore = score;
+                bestId = sensorId;
+            }
+        }
+        cpuTemperatureSensorId = bestId;
+        if (bestId.length === 0) temperatureReady = false;
+    }
+
     function migrateConfiguration() {
-        if (Plasmoid.configuration.componentConfigVersion >= 3) {
+        if (Plasmoid.configuration.componentConfigVersion >= 4) {
             return;
         }
         const value = Plasmoid.configuration.componentConfigVersion < 1
@@ -53,7 +95,7 @@ PlasmoidItem {
         Plasmoid.configuration.components = Components.serialize(
             value
         );
-        Plasmoid.configuration.componentConfigVersion = 3;
+        Plasmoid.configuration.componentConfigVersion = 4;
     }
 
     function visiblePanelComponentCount() {
@@ -113,6 +155,8 @@ PlasmoidItem {
                     cpuUsage: root.cpuUsage
                     smoothedCpu: root.smoothedCpu
                     sensorReady: root.sensorReady
+                    cpuTemperature: root.cpuTemperature
+                    temperatureReady: root.temperatureReady
                     vertical: root.vertical
                     contentSpacing: root.componentSpacing
                     width: implicitWidth
@@ -131,7 +175,41 @@ PlasmoidItem {
     // representation layout valid after a shell restart.
     fullRepresentation: Item {}
 
-    Component.onCompleted: migrateConfiguration()
+    Sensors.SensorTreeModel { id: sensorTreeModel }
+
+    KItemModels.KDescendantsProxyModel {
+        id: flatSensorModel
+        model: sensorTreeModel
+        expandsByDefault: true
+    }
+
+    Timer {
+        id: sensorDiscoveryTimer
+        interval: 100
+        onTriggered: root.discoverCpuTemperatureSensor()
+    }
+
+    Connections {
+        target: flatSensorModel
+        enabled: root.cpuTemperatureEnabled
+        function onRowsInserted() { sensorDiscoveryTimer.restart(); }
+        function onModelReset() { sensorDiscoveryTimer.restart(); }
+        function onLayoutChanged() { sensorDiscoveryTimer.restart(); }
+    }
+
+    onCpuTemperatureEnabledChanged: {
+        if (cpuTemperatureEnabled) {
+            sensorDiscoveryTimer.restart();
+        } else {
+            cpuTemperatureSensorId = "";
+            temperatureReady = false;
+        }
+    }
+
+    Component.onCompleted: {
+        migrateConfiguration();
+        if (cpuTemperatureEnabled) sensorDiscoveryTimer.start();
+    }
 
     Sensors.Sensor {
         id: cpuSensor
@@ -139,5 +217,17 @@ PlasmoidItem {
         enabled: root.visible
         updateRateLimit: 1000
         onValueChanged: root.updateCpu(value)
+    }
+
+    Sensors.Sensor {
+        id: cpuTemperatureSensor
+        sensorId: root.cpuTemperatureSensorId
+        enabled: root.visible && root.cpuTemperatureEnabled
+            && sensorId.length > 0
+        updateRateLimit: 1000
+        onValueChanged: root.updateCpuTemperature(value)
+        onStatusChanged: {
+            if (status !== Sensors.Sensor.Ready) root.temperatureReady = false;
+        }
     }
 }
