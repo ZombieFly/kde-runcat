@@ -44,9 +44,11 @@ make reload
 ## Components
 
 New installations start with only the Runner. The widget settings can add,
-remove, configure, and reorder memory, disk, network, and AI indicators. AI
-usage is read locally from Codex and Claude Code session logs;
-no credentials or prompts are sent anywhere.
+remove, configure, and reorder memory, disk, network, Codex usage, and Claude
+Code usage independently. Codex and Claude Code usage is read locally from
+their session logs; no credentials or prompts are sent anywhere. Each token
+usage ring can optionally show the current context tokens on the first line and
+today's total tokens on a subdued second line.
 
 The Runner can optionally show CPU usage and a color-coded CPU temperature in
 Celsius or Fahrenheit.

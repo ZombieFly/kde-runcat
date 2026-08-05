@@ -3,7 +3,8 @@ const componentTypes = [
     "memory",
     "disk",
     "network",
-    "ai"
+    "codex",
+    "claude"
 ];
 
 function defaultSettings(type) {
@@ -20,12 +21,10 @@ function defaultSettings(type) {
             showCpuTemperature: false,
             temperatureUnit: "celsius"
         };
-    case "ai":
-        return {
-            showCodex: true,
-            showClaude: true,
-            claudeContextWindow: 200000
-        };
+    case "codex":
+        return {showText: false};
+    case "claude":
+        return {showText: false, contextWindow: 200000};
     case "memory":
     case "disk":
         return {showText: false};
@@ -76,18 +75,21 @@ function normalizedSettings(type, source) {
         };
     }
 
-    if (type === "ai") {
-        const legacyDaily = Boolean(value.showDaily);
+    if (type === "codex") {
         return {
-            showCodex: value.showCodex === undefined
-                ? defaults.showCodex
-                : Boolean(value.showCodex) || legacyDaily,
-            showClaude: value.showClaude === undefined
-                ? defaults.showClaude
-                : Boolean(value.showClaude) || legacyDaily,
-            claudeContextWindow: boundedNumber(
-                value.claudeContextWindow,
-                defaults.claudeContextWindow,
+            showText: value.showText === undefined
+                ? defaults.showText : Boolean(value.showText)
+        };
+    }
+
+    if (type === "claude") {
+        return {
+            showText: value.showText === undefined
+                ? defaults.showText : Boolean(value.showText),
+            contextWindow: boundedNumber(
+                value.contextWindow === undefined
+                    ? value.claudeContextWindow : value.contextWindow,
+                defaults.contextWindow,
                 10000,
                 2000000
             )
@@ -142,6 +144,27 @@ function normalize(value) {
     for (let index = 0; index < source.length; ++index) {
         const item = source[index];
         const type = item && String(item.type || "");
+        if (type === "ai") {
+            const settings = item.settings && typeof item.settings === "object"
+                ? item.settings : {};
+            const legacyDaily = Boolean(settings.showDaily);
+            const showCodex = settings.showCodex === undefined
+                ? true : Boolean(settings.showCodex) || legacyDaily;
+            const showClaude = settings.showClaude === undefined
+                ? true : Boolean(settings.showClaude) || legacyDaily;
+            if (showCodex && !seen.codex) {
+                seen.codex = true;
+                result.push(definition("codex", {showText: true}));
+            }
+            if (showClaude && !seen.claude) {
+                seen.claude = true;
+                result.push(definition("claude", {
+                    showText: true,
+                    contextWindow: settings.claudeContextWindow
+                }));
+            }
+            continue;
+        }
         if (type === "cpu" || type === "cpuTemperature") {
             if (!hasRunner && !seen.runner) {
                 seen.runner = true;
@@ -210,13 +233,17 @@ function migrateLegacy(configuration) {
     if (configuration.showCodexTokenUsage
             || configuration.showClaudeTokenUsage
             || configuration.showDailyTokenUsage) {
-        result.push(definition("ai", {
-            showCodex: configuration.showCodexTokenUsage
-                || configuration.showDailyTokenUsage,
-            showClaude: configuration.showClaudeTokenUsage
-                || configuration.showDailyTokenUsage,
-            claudeContextWindow: configuration.claudeContextWindow
-        }));
+        if (configuration.showCodexTokenUsage
+                || configuration.showDailyTokenUsage) {
+            result.push(definition("codex", {showText: true}));
+        }
+        if (configuration.showClaudeTokenUsage
+                || configuration.showDailyTokenUsage) {
+            result.push(definition("claude", {
+                showText: true,
+                contextWindow: configuration.claudeContextWindow
+            }));
+        }
     }
     return result;
 }

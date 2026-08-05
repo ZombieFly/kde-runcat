@@ -77,15 +77,14 @@ Item {
                     ? contentSpacing + runnerInfoWidth : 0);
         case "memory":
         case "disk":
+        case "codex":
+        case "claude":
             return componentLoader.item
                 ? Number(componentLoader.item.implicitWidth)
                     || resourceRingSize
                 : resourceRingSize;
         case "network":
             return Kirigami.Units.gridUnit * 4;
-        case "ai":
-            return componentLoader.item
-                ? Number(componentLoader.item.implicitWidth) || 0 : 0;
         }
         return 0;
     }
@@ -121,7 +120,8 @@ Item {
             case "memory": return memoryComponent;
             case "disk": return diskComponent;
             case "network": return networkComponent;
-            case "ai": return aiComponent;
+            case "codex": return codexComponent;
+            case "claude": return claudeComponent;
             }
             return null;
         }
@@ -330,23 +330,36 @@ Item {
     }
 
     Component {
-        id: aiComponent
+        id: codexComponent
 
         TokenUsage {
-            claudeContextWindow: Number(
-                root.componentSettings.claudeContextWindow || 200000
-            )
-            showCodex: Boolean(root.componentSettings.showCodex)
-            showClaude: Boolean(root.componentSettings.showClaude)
-            codexTodayTokens: root.metrics.codexTodayTokens
-            codexContextTokens: root.metrics.codexContextTokens
-            codexContextWindow: root.metrics.codexContextWindow
-            claudeTodayTokens: root.metrics.claudeTodayTokens
-            claudeContextTokens: root.metrics.claudeContextTokens
-            codexAvailable: root.metrics.codexAvailable
-            claudeAvailable: root.metrics.claudeAvailable
-            codexUpdatedAt: root.metrics.codexUpdatedAt
-            claudeUpdatedAt: root.metrics.claudeUpdatedAt
+            iconSource: Qt.resolvedUrl("../images/brands/codex.svg")
+            title: i18n("Codex")
+            ringColor: "#10a37f"
+            todayTokens: root.metrics.codexTodayTokens
+            contextTokens: root.metrics.codexContextTokens
+            contextWindow: root.metrics.codexContextWindow
+            available: root.metrics.codexAvailable
+            updatedAt: root.metrics.codexUpdatedAt
+            showText: Boolean(root.componentSettings.showText)
+            spacing: root.contentSpacing
+        }
+    }
+
+    Component {
+        id: claudeComponent
+
+        TokenUsage {
+            iconSource: Qt.resolvedUrl("../images/brands/claude.svg")
+            title: i18n("Claude Code")
+            ringColor: "#d97757"
+            todayTokens: root.metrics.claudeTodayTokens
+            contextTokens: root.metrics.claudeContextTokens
+            contextWindow: Number(root.componentSettings.contextWindow || 200000)
+            available: root.metrics.claudeAvailable
+            updatedAt: root.metrics.claudeUpdatedAt
+            showText: Boolean(root.componentSettings.showText)
+            spacing: root.contentSpacing
         }
     }
 }

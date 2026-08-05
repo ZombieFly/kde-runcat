@@ -63,7 +63,8 @@ KCM.ScrollViewKCM {
         case "memory": return i18n("Memory usage");
         case "disk": return i18n("Disk usage");
         case "network": return i18n("Network rate");
-        case "ai": return i18n("AI usage");
+        case "codex": return i18n("Codex usage");
+        case "claude": return i18n("Claude Code usage");
         }
         return type;
     }
@@ -74,7 +75,8 @@ KCM.ScrollViewKCM {
         case "memory": return i18n("Physical memory usage ring");
         case "disk": return i18n("Combined disk usage ring");
         case "network": return i18n("Download and upload rates");
-        case "ai": return i18n("Codex and Claude Code context and daily tokens");
+        case "codex": return i18n("Codex context and daily tokens");
+        case "claude": return i18n("Claude Code context and daily tokens");
         }
         return "";
     }
@@ -85,7 +87,8 @@ KCM.ScrollViewKCM {
         case "memory": return "media-flash-symbolic";
         case "disk": return "drive-harddisk-symbolic";
         case "network": return "network-wired-symbolic";
-        case "ai": return "applications-science-symbolic";
+        case "codex": return "applications-science-symbolic";
+        case "claude": return "applications-science-symbolic";
         }
         return "widget-alternatives";
     }
@@ -136,8 +139,8 @@ KCM.ScrollViewKCM {
         if (cfg_components !== serialized) {
             cfg_components = serialized;
         }
-        if (cfg_componentConfigVersion !== 6) {
-            cfg_componentConfigVersion = 6;
+        if (cfg_componentConfigVersion !== 7) {
+            cfg_componentConfigVersion = 7;
         }
     }
 
@@ -181,8 +184,8 @@ KCM.ScrollViewKCM {
         if (cfg_components !== serialized) {
             cfg_components = serialized;
         }
-        if (cfg_componentConfigVersion !== 6) {
-            cfg_componentConfigVersion = 6;
+        if (cfg_componentConfigVersion !== 7) {
+            cfg_componentConfigVersion = 7;
         }
     }
 
@@ -434,38 +437,15 @@ KCM.ScrollViewKCM {
                     GridLayout {
                         Layout.fillWidth: true
                         columns: 2
-                        visible: card.componentType === "ai"
+                        visible: card.componentType === "claude"
 
-                        Label { text: i18n("Show:") }
-                        ColumnLayout {
-                            CheckBox {
-                                text: i18n("Codex")
-                                checked: Boolean(card.settings.showCodex)
-                                onClicked: root.updateSetting(
-                                    card.index, "showCodex", checked
-                                )
-                            }
-                            CheckBox {
-                                id: claudeCheck
-                                text: i18n("Claude Code")
-                                checked: Boolean(card.settings.showClaude)
-                                onClicked: root.updateSetting(
-                                    card.index, "showClaude", checked
-                                )
-                            }
-                        }
-
-                        Label {
-                            visible: claudeCheck.checked
-                            text: i18n("Claude context window:")
-                        }
+                        Label { text: i18n("Context window:") }
                         SpinBox {
-                            visible: claudeCheck.checked
                             from: 10000
                             to: 2000000
                             stepSize: 10000
                             value: Number(
-                                card.settings.claudeContextWindow || 200000
+                                card.settings.contextWindow || 200000
                             )
                             textFromValue: function(value) {
                                 return i18n(
@@ -478,17 +458,21 @@ KCM.ScrollViewKCM {
                                 );
                             }
                             onValueModified: root.updateSetting(
-                                card.index, "claudeContextWindow", value
+                                card.index, "contextWindow", value
                             )
                         }
-
                     }
 
                     CheckBox {
                         Layout.fillWidth: true
                         visible: card.componentType === "memory"
                             || card.componentType === "disk"
-                        text: i18n("Show used and total capacity next to the ring")
+                            || card.componentType === "codex"
+                            || card.componentType === "claude"
+                        text: card.componentType === "codex"
+                                || card.componentType === "claude"
+                            ? i18n("Show context and today's tokens next to the ring")
+                            : i18n("Show used and total capacity next to the ring")
                         checked: Boolean(card.settings.showText)
                         onClicked: root.updateSetting(
                             card.index, "showText", checked

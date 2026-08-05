@@ -145,6 +145,70 @@ TestCase {
         }
     }
 
+    Component {
+        id: codexRingFactory
+
+        PanelComponent {
+            componentType: "codex"
+            componentSettings: ({showText: false})
+            cpuUsage: 0
+            smoothedCpu: 0
+            sensorReady: true
+            cpuTemperature: 0
+            temperatureReady: false
+            metrics: testCase.metrics
+            height: 32
+        }
+    }
+
+    Component {
+        id: codexRingWithTextFactory
+
+        PanelComponent {
+            componentType: "codex"
+            componentSettings: ({showText: true})
+            cpuUsage: 0
+            smoothedCpu: 0
+            sensorReady: true
+            cpuTemperature: 0
+            temperatureReady: false
+            metrics: testCase.metrics
+            height: 32
+        }
+    }
+
+    Component {
+        id: claudeRingFactory
+
+        PanelComponent {
+            componentType: "claude"
+            componentSettings: ({showText: false, contextWindow: 200000})
+            cpuUsage: 0
+            smoothedCpu: 0
+            sensorReady: true
+            cpuTemperature: 0
+            temperatureReady: false
+            metrics: testCase.metrics
+            height: 32
+        }
+    }
+
+    Component {
+        id: claudeRingWithTextFactory
+
+        PanelComponent {
+            componentType: "claude"
+            componentSettings: ({showText: true, contextWindow: 200000})
+            cpuUsage: 0
+            smoothedCpu: 0
+            sensorReady: true
+            cpuTemperature: 0
+            temperatureReady: false
+            metrics: testCase.metrics
+            height: 32
+        }
+    }
+
     function test_canInstantiate() {
         const component = createTemporaryObject(panelComponentFactory, testCase);
         verify(component !== null);
@@ -202,6 +266,28 @@ TestCase {
         const ringOnly = createTemporaryObject(memoryRingFactory, testCase);
         const withText = createTemporaryObject(
             memoryRingWithTextFactory, testCase
+        );
+        verify(ringOnly !== null);
+        verify(withText !== null);
+        verify(withText.implicitWidth > ringOnly.implicitWidth);
+        compare(withText.implicitHeight, ringOnly.implicitHeight);
+    }
+
+    function test_codex_text_adds_width_without_growing_ring() {
+        const ringOnly = createTemporaryObject(codexRingFactory, testCase);
+        const withText = createTemporaryObject(
+            codexRingWithTextFactory, testCase
+        );
+        verify(ringOnly !== null);
+        verify(withText !== null);
+        verify(withText.implicitWidth > ringOnly.implicitWidth);
+        compare(withText.implicitHeight, ringOnly.implicitHeight);
+    }
+
+    function test_claude_text_adds_width_without_growing_ring() {
+        const ringOnly = createTemporaryObject(claudeRingFactory, testCase);
+        const withText = createTemporaryObject(
+            claudeRingWithTextFactory, testCase
         );
         verify(ringOnly !== null);
         verify(withText !== null);

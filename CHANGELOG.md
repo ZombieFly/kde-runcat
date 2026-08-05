@@ -10,15 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - Reworked RunCat into a modular panel widget whose Runner, memory, disk,
-  network, and AI indicators can be added, removed, configured,
-  and reordered independently. New installations start with only the Runner;
-  memory and disk use compact icon-centered rings, and optional Codex and
-  Claude Code usage is read from local session data. CPU temperature is now an
-  optional, color-coded Celsius or Fahrenheit line within the Runner, and the
-  separate dashboard was removed now that relevant information can be shown
-  directly in the panel.
-- Simplified AI settings to Codex and Claude switches; each enabled service now
-  shows both its context ring and today's token usage.
+  network, Codex usage, and Claude Code usage components can be added, removed,
+  configured, and reordered independently. New installations start with only
+  the Runner; memory and disk use compact icon-centered rings, and optional
+  Codex and Claude Code usage is read from local session data. CPU temperature
+  is now an optional, color-coded Celsius or Fahrenheit line within the Runner,
+  and the separate dashboard was removed now that relevant information can be
+  shown directly in the panel.
+- Split AI usage into independently configurable Codex usage and Claude Code
+  usage components. Each ring can optionally show current context tokens and a
+  subdued second line with today's total tokens.
 
 ### Fixed
 

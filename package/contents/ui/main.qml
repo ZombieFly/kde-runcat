@@ -37,8 +37,11 @@ PlasmoidItem {
     readonly property var networkComponent: Components.find(
         panelComponents, "network"
     )
-    readonly property var aiComponent: Components.find(
-        panelComponents, "ai"
+    readonly property var codexComponent: Components.find(
+        panelComponents, "codex"
+    )
+    readonly property var claudeComponent: Components.find(
+        panelComponents, "claude"
     )
     readonly property bool cpuTemperatureEnabled: runnerComponent
         && Boolean(runnerComponent.settings.showCpuTemperature)
@@ -98,7 +101,7 @@ PlasmoidItem {
     }
 
     function migrateConfiguration() {
-        if (Plasmoid.configuration.componentConfigVersion >= 6) {
+        if (Plasmoid.configuration.componentConfigVersion >= 7) {
             return;
         }
         const value = Plasmoid.configuration.componentConfigVersion < 1
@@ -107,18 +110,13 @@ PlasmoidItem {
         Plasmoid.configuration.components = Components.serialize(
             value
         );
-        Plasmoid.configuration.componentConfigVersion = 6;
+        Plasmoid.configuration.componentConfigVersion = 7;
     }
 
     function visiblePanelComponentCount() {
         let count = 0;
         for (let index = 0; index < panelComponents.length; ++index) {
-            const component = panelComponents[index];
-            if (component.type !== "ai"
-                    || component.settings.showCodex
-                    || component.settings.showClaude) {
-                ++count;
-            }
+            ++count;
         }
         return count;
     }
@@ -173,9 +171,6 @@ PlasmoidItem {
                     contentSpacing: root.componentSpacing
                     width: implicitWidth
                     height: componentRow.height
-                    visible: componentType !== "ai"
-                        || Boolean(componentSettings.showCodex)
-                        || Boolean(componentSettings.showClaude)
                 }
             }
         }
@@ -196,11 +191,10 @@ PlasmoidItem {
         memoryEnabled: Boolean(root.memoryComponent)
         diskEnabled: Boolean(root.diskComponent)
         networkEnabled: Boolean(root.networkComponent)
-        tokenUsageEnabled: Boolean(root.aiComponent)
-            && (Boolean(root.aiComponent.settings.showCodex)
-                || Boolean(root.aiComponent.settings.showClaude))
-        claudeContextWindow: root.aiComponent
-            ? Number(root.aiComponent.settings.claudeContextWindow || 200000)
+        tokenUsageEnabled: Boolean(root.codexComponent)
+            || Boolean(root.claudeComponent)
+        claudeContextWindow: root.claudeComponent
+            ? Number(root.claudeComponent.settings.contextWindow || 200000)
             : 200000
     }
 
