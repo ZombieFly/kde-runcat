@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - Stabilized dynamic component loading, configuration-page layout, and panel
   sizing while preserving existing settings during migration.
+- Removed the overlapping widget tooltip when hovering individual components.
 
 ## [0.3.0] - 2026-08-05
 

@@ -113,10 +113,10 @@ PlasmoidItem {
 
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
     Plasmoid.title: i18n("RunCat")
-    toolTipMainText: i18n("RunCat")
-    toolTipSubText: sensorReady
-        ? i18n("CPU usage: %1%", Math.round(smoothedCpu))
-        : i18n("Waiting for CPU data")
+    // Component items provide their own tooltips. Keep the shell-level
+    // tooltip empty so it does not overlap them.
+    toolTipMainText: ""
+    toolTipSubText: ""
     activationTogglesExpanded: false
     preferredRepresentation: compactRepresentation
 

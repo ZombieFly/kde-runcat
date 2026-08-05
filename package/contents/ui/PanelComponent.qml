@@ -53,6 +53,16 @@ Item {
         || temperatureIsCool
         ? Kirigami.Theme.textColor
         : Temperature.color(cpuTemperature)
+    readonly property string runnerCpuToolTipText: sensorReady
+        ? i18n("CPU usage: %1%", Math.round(cpuUsage))
+        : i18n("Waiting for CPU data")
+    readonly property string runnerToolTipText: showCpuTemperature
+        ? i18n(
+            "%1\nCPU temperature: %2",
+            runnerCpuToolTipText,
+            temperatureText
+        )
+        : runnerCpuToolTipText
     readonly property real runnerInfoWidth: Math.ceil(Math.max(
         Boolean(componentSettings.showCpuUsage) ? cpuMetrics.advanceWidth : 0,
         showCpuTemperature ? temperatureMetrics.advanceWidth : 0
@@ -121,6 +131,8 @@ Item {
 
         Item {
             id: runnerContent
+
+            Accessible.name: root.runnerToolTipText
 
             Row {
                 anchors.centerIn: parent
@@ -258,6 +270,14 @@ Item {
                     }
                 }
             }
+
+            HoverHandler {
+                id: runnerHoverHandler
+            }
+
+            QQC2.ToolTip.visible: runnerHoverHandler.hovered
+            QQC2.ToolTip.text: root.runnerToolTipText
+            QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
         }
     }
 
