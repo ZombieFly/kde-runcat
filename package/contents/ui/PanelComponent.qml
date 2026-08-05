@@ -77,14 +77,13 @@ Item {
                     ? contentSpacing + runnerInfoWidth : 0);
         case "memory":
         case "disk":
+        case "network":
         case "codex":
         case "claude":
             return componentLoader.item
                 ? Number(componentLoader.item.implicitWidth)
                     || resourceRingSize
                 : resourceRingSize;
-        case "network":
-            return Kirigami.Units.gridUnit * 4;
         }
         return 0;
     }
@@ -326,6 +325,7 @@ Item {
             uploadRate: root.metrics.uploadRate
             downloadAvailable: root.metrics.downloadAvailable
             uploadAvailable: root.metrics.uploadAvailable
+            spacing: root.contentSpacing
         }
     }
 

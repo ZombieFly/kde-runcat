@@ -162,6 +162,22 @@ TestCase {
     }
 
     Component {
+        id: networkRateFactory
+
+        PanelComponent {
+            componentType: "network"
+            componentSettings: ({})
+            cpuUsage: 0
+            smoothedCpu: 0
+            sensorReady: true
+            cpuTemperature: 0
+            temperatureReady: false
+            metrics: testCase.metrics
+            height: 32
+        }
+    }
+
+    Component {
         id: codexRingWithTextFactory
 
         PanelComponent {
@@ -282,6 +298,20 @@ TestCase {
         verify(withText !== null);
         verify(withText.implicitWidth > ringOnly.implicitWidth);
         compare(withText.implicitHeight, ringOnly.implicitHeight);
+    }
+
+    function test_network_icon_and_rates_fit_panel_height() {
+        const component = createTemporaryObject(networkRateFactory, testCase);
+        verify(component !== null);
+        verify(component.implicitWidth > 0);
+        compare(component.implicitHeight, 32);
+
+        const initialWidth = component.implicitWidth;
+        component.metrics = Object.assign({}, testCase.metrics, {
+            downloadRate: "999.9 MiB/s",
+            uploadRate: "1 B/s"
+        });
+        compare(component.implicitWidth, initialWidth);
     }
 
     function test_claude_text_adds_width_without_growing_ring() {

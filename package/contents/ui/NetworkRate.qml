@@ -12,43 +12,61 @@ Item {
     required property string uploadRate
     required property bool downloadAvailable
     required property bool uploadAvailable
+    property real spacing: Kirigami.Units.smallSpacing
 
-    readonly property bool fits: height >= rates.implicitHeight
     readonly property string downloadText: downloadAvailable
         ? downloadRate : i18n("Unavailable")
     readonly property string uploadText: uploadAvailable
         ? uploadRate : i18n("Unavailable")
+    readonly property string shownDownloadText: i18n("↓ %1", downloadText)
+    readonly property string shownUploadText: i18n("↑ %1", uploadText)
+    readonly property real iconSize: Math.min(
+        height,
+        Kirigami.Units.iconSizes.smallMedium
+    )
+    readonly property real textWidth: Kirigami.Units.gridUnit * 4
 
-    implicitWidth: Kirigami.Units.gridUnit * 4
-    implicitHeight: rates.implicitHeight
+    implicitWidth: iconSize + spacing + textWidth
+    implicitHeight: Math.max(iconSize, rates.implicitHeight)
     Accessible.name: i18n(
         "Download: %1; Upload: %2",
         downloadText,
         uploadText
     )
 
-    Column {
-        id: rates
+    Row {
+        anchors.fill: parent
+        spacing: root.spacing
 
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        spacing: 0
-
-        QQC2.Label {
-            width: parent.width
-            font: Kirigami.Theme.smallFont
-            color: "#00bcd4"
-            elide: Text.ElideRight
-            text: i18n("↓ %1", root.downloadText)
+        Kirigami.Icon {
+            width: root.iconSize
+            height: width
+            anchors.verticalCenter: parent.verticalCenter
+            source: "network-wired-symbolic"
+            color: Kirigami.Theme.textColor
+            opacity: root.downloadAvailable || root.uploadAvailable ? 1 : 0.45
         }
 
-        QQC2.Label {
-            width: parent.width
-            font: Kirigami.Theme.smallFont
-            color: "#9b59b6"
-            elide: Text.ElideRight
-            text: i18n("↑ %1", root.uploadText)
+        Column {
+            id: rates
+
+            width: root.textWidth
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 0
+
+            QQC2.Label {
+                width: parent.width
+                font: Kirigami.Theme.smallFont
+                elide: Text.ElideRight
+                text: root.shownDownloadText
+            }
+
+            QQC2.Label {
+                width: parent.width
+                font: Kirigami.Theme.smallFont
+                elide: Text.ElideRight
+                text: root.shownUploadText
+            }
         }
     }
 
