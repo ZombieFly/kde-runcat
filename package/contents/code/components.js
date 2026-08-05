@@ -3,6 +3,9 @@ const componentTypes = [
     "memory",
     "disk",
     "network",
+    "gpu",
+    "vram",
+    "diskio",
     "codex",
     "claude"
 ];
@@ -25,6 +28,14 @@ function defaultSettings(type) {
         return {showText: false};
     case "claude":
         return {showText: false, contextWindow: 200000};
+    case "gpu":
+        return {
+            showText: false,
+            showGpuTemperature: false,
+            temperatureUnit: "celsius"
+        };
+    case "vram":
+        return {showText: false};
     case "memory":
     case "disk":
         return {showText: false};
@@ -96,7 +107,19 @@ function normalizedSettings(type, source) {
         };
     }
 
-    if (type === "memory" || type === "disk") {
+    if (type === "gpu") {
+        return {
+            showText: value.showText === undefined
+                ? defaults.showText : Boolean(value.showText),
+            showGpuTemperature: value.showGpuTemperature === undefined
+                ? defaults.showGpuTemperature
+                : Boolean(value.showGpuTemperature),
+            temperatureUnit: value.temperatureUnit === "fahrenheit"
+                ? "fahrenheit" : defaults.temperatureUnit
+        };
+    }
+
+    if (type === "memory" || type === "disk" || type === "vram") {
         return {
             showText: value.showText === undefined
                 ? defaults.showText : Boolean(value.showText)

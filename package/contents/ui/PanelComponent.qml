@@ -78,6 +78,9 @@ Item {
         case "memory":
         case "disk":
         case "network":
+        case "gpu":
+        case "vram":
+        case "diskio":
         case "codex":
         case "claude":
             return componentLoader.item
@@ -119,6 +122,9 @@ Item {
             case "memory": return memoryComponent;
             case "disk": return diskComponent;
             case "network": return networkComponent;
+            case "gpu": return gpuComponent;
+            case "vram": return vramComponent;
+            case "diskio": return diskIoComponent;
             case "codex": return codexComponent;
             case "claude": return claudeComponent;
             }
@@ -343,6 +349,92 @@ Item {
             updatedAt: root.metrics.codexUpdatedAt
             showText: Boolean(root.componentSettings.showText)
             spacing: root.contentSpacing
+        }
+    }
+
+    Component {
+        id: gpuComponent
+
+        ResourceRing {
+            readonly property bool showUsageText: Boolean(
+                root.componentSettings.showText
+            )
+            readonly property bool showTemperature: Boolean(
+                root.componentSettings.showGpuTemperature
+            )
+            readonly property string temperatureUnit: Temperature.normalizeUnit(
+                String(root.componentSettings.temperatureUnit || "celsius")
+            )
+            readonly property bool temperatureIsCool:
+                root.metrics.gpuTemperatureAvailable
+                && root.metrics.gpuTemperature < 60
+
+            ringSize: root.resourceRingSize
+            title: i18n("GPU Usage")
+            iconName: "video-display-symbolic"
+            color: "#9b59b6"
+            usage: root.metrics.gpuUsage
+            usedText: root.metrics.gpuUsageAvailable
+                ? i18n("%1%", Math.round(root.metrics.gpuUsage)) : ""
+            totalText: showTemperature && root.metrics.gpuTemperatureAvailable
+                ? Temperature.format(
+                    root.metrics.gpuTemperature, temperatureUnit
+                ) : Temperature.unavailable(temperatureUnit)
+            usageAvailable: root.metrics.gpuUsageAvailable
+            detailAvailable: root.metrics.gpuUsageAvailable
+                || (showTemperature && root.metrics.gpuTemperatureAvailable)
+            firstLineAvailable: root.metrics.gpuUsageAvailable
+            secondLineAvailable: showTemperature
+                && root.metrics.gpuTemperatureAvailable
+            firstLineVisible: showUsageText
+            secondLineVisible: showTemperature
+            showText: showUsageText || showTemperature
+            spacing: root.contentSpacing
+            reservedTextWidth: Math.ceil(Math.max(
+                cpuMetrics.advanceWidth,
+                temperatureMetrics.advanceWidth
+            ))
+            secondLineColor: !showTemperature
+                    || !root.metrics.gpuTemperatureAvailable
+                    || temperatureIsCool
+                ? Kirigami.Theme.textColor
+                : Temperature.color(root.metrics.gpuTemperature)
+            secondLineOpacity: temperatureIsCool ? 0.7 : 1
+        }
+    }
+
+    Component {
+        id: vramComponent
+
+        ResourceRing {
+            ringSize: root.resourceRingSize
+            title: i18n("Video Memory Usage")
+            iconName: "video-display-symbolic"
+            color: "#e67e22"
+            usage: root.metrics.vramUsage
+            usedText: root.metrics.vramUsed
+            totalText: root.metrics.vramTotal
+            usageAvailable: root.metrics.vramUsageAvailable
+            detailAvailable: root.metrics.vramDetailAvailable
+            showText: Boolean(root.componentSettings.showText)
+            spacing: root.contentSpacing
+        }
+    }
+
+    Component {
+        id: diskIoComponent
+
+        NetworkRate {
+            downloadRate: root.metrics.diskReadRate
+            uploadRate: root.metrics.diskWriteRate
+            downloadAvailable: root.metrics.diskReadAvailable
+            uploadAvailable: root.metrics.diskWriteAvailable
+            spacing: root.contentSpacing
+            iconName: "drive-harddisk-symbolic"
+            downloadPrefix: "R"
+            uploadPrefix: "W"
+            downloadName: i18n("Read")
+            uploadName: i18n("Write")
         }
     }
 

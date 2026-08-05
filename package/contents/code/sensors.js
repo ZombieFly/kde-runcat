@@ -36,3 +36,27 @@ function cpuTemperatureSensorScore(sensorId, name) {
     if (text.includes("input")) score += 20;
     return score;
 }
+
+function gpuTemperatureSensorScore(sensorId, name) {
+    const id = sensorId.toLowerCase();
+    const text = id + " " + name.toLowerCase();
+
+    if (id === "gpu/all/temperature") {
+        return 1000;
+    }
+    const standard = id.match(/^gpu\/gpu(\d+)\/temperature$/);
+    if (standard) {
+        return 900 - Math.min(100, Number(standard[1]));
+    }
+    if (!id.startsWith("lmsensors/")
+            || (!text.includes("gpu") && !text.includes("amdgpu")
+                && !text.includes("nvidia"))) {
+        return -1;
+    }
+    if (text.includes("crit") || text.includes("max")
+            || text.includes("alarm") || text.includes("emergency")) {
+        return -1;
+    }
+    return 100 + (text.includes("edge") ? 20 : 0)
+        + (text.includes("input") ? 10 : 0);
+}

@@ -37,6 +37,11 @@ PlasmoidItem {
     readonly property var networkComponent: Components.find(
         panelComponents, "network"
     )
+    readonly property var gpuComponent: Components.find(panelComponents, "gpu")
+    readonly property var vramComponent: Components.find(panelComponents, "vram")
+    readonly property var diskIoComponent: Components.find(
+        panelComponents, "diskio"
+    )
     readonly property var codexComponent: Components.find(
         panelComponents, "codex"
     )
@@ -45,6 +50,8 @@ PlasmoidItem {
     )
     readonly property bool cpuTemperatureEnabled: runnerComponent
         && Boolean(runnerComponent.settings.showCpuTemperature)
+    readonly property bool gpuTemperatureEnabled: gpuComponent
+        && Boolean(gpuComponent.settings.showGpuTemperature)
 
     property real smoothedCpu: 0
     property real cpuUsage: 0
@@ -52,6 +59,7 @@ PlasmoidItem {
     property string cpuTemperatureSensorId: ""
     property real cpuTemperature: 0
     property bool temperatureReady: false
+    property string gpuTemperatureSensorId: ""
 
     function updateCpu(rawValue) {
         const value = Number(rawValue);
@@ -98,6 +106,32 @@ PlasmoidItem {
         }
         cpuTemperatureSensorId = bestId;
         if (bestId.length === 0) temperatureReady = false;
+    }
+
+    function discoverGpuTemperatureSensor() {
+        let bestId = "";
+        let bestScore = -1;
+        for (let row = 0; row < flatSensorModel.rowCount(); ++row) {
+            const index = flatSensorModel.index(row, 0);
+            const sensorId = String(flatSensorModel.data(
+                index, Sensors.SensorTreeModel.SensorId
+            ) || "");
+            if (sensorId.length === 0) continue;
+            const name = String(flatSensorModel.data(index, Qt.DisplayRole) || "");
+            const score = SensorSelection.gpuTemperatureSensorScore(
+                sensorId, name
+            );
+            if (score > bestScore) {
+                bestScore = score;
+                bestId = sensorId;
+            }
+        }
+        gpuTemperatureSensorId = bestId;
+    }
+
+    function discoverTemperatureSensors() {
+        if (cpuTemperatureEnabled) discoverCpuTemperatureSensor();
+        if (gpuTemperatureEnabled) discoverGpuTemperatureSensor();
     }
 
     function migrateConfiguration() {
@@ -191,6 +225,11 @@ PlasmoidItem {
         memoryEnabled: Boolean(root.memoryComponent)
         diskEnabled: Boolean(root.diskComponent)
         networkEnabled: Boolean(root.networkComponent)
+        gpuEnabled: Boolean(root.gpuComponent)
+        gpuTemperatureEnabled: root.gpuTemperatureEnabled
+        vramEnabled: Boolean(root.vramComponent)
+        diskIoEnabled: Boolean(root.diskIoComponent)
+        gpuTemperatureSensorId: root.gpuTemperatureSensorId
         tokenUsageEnabled: Boolean(root.codexComponent)
             || Boolean(root.claudeComponent)
         claudeContextWindow: root.claudeComponent
@@ -209,12 +248,12 @@ PlasmoidItem {
     Timer {
         id: sensorDiscoveryTimer
         interval: 100
-        onTriggered: root.discoverCpuTemperatureSensor()
+        onTriggered: root.discoverTemperatureSensors()
     }
 
     Connections {
         target: flatSensorModel
-        enabled: root.cpuTemperatureEnabled
+        enabled: root.cpuTemperatureEnabled || root.gpuTemperatureEnabled
         function onRowsInserted() { sensorDiscoveryTimer.restart(); }
         function onModelReset() { sensorDiscoveryTimer.restart(); }
         function onLayoutChanged() { sensorDiscoveryTimer.restart(); }
@@ -229,9 +268,19 @@ PlasmoidItem {
         }
     }
 
+    onGpuTemperatureEnabledChanged: {
+        if (gpuTemperatureEnabled) {
+            sensorDiscoveryTimer.restart();
+        } else {
+            gpuTemperatureSensorId = "";
+        }
+    }
+
     Component.onCompleted: {
         migrateConfiguration();
-        if (cpuTemperatureEnabled) sensorDiscoveryTimer.start();
+        if (cpuTemperatureEnabled || gpuTemperatureEnabled) {
+            sensorDiscoveryTimer.start();
+        }
     }
 
     Sensors.Sensor {

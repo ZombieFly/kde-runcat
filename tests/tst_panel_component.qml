@@ -26,6 +26,19 @@ TestCase {
         uploadRate: "100 KiB/s",
         downloadAvailable: true,
         uploadAvailable: true,
+        gpuUsage: 45,
+        gpuUsageAvailable: true,
+        gpuTemperature: 55,
+        gpuTemperatureAvailable: true,
+        vramUsage: 25,
+        vramUsed: "2 GiB",
+        vramTotal: "8 GiB",
+        vramUsageAvailable: true,
+        vramDetailAvailable: true,
+        diskReadRate: "10 MiB/s",
+        diskWriteRate: "2 MiB/s",
+        diskReadAvailable: true,
+        diskWriteAvailable: true,
         codexTodayTokens: 1000,
         codexContextTokens: 2000,
         codexContextWindow: 100000,
@@ -194,6 +207,58 @@ TestCase {
     }
 
     Component {
+        id: gpuFactory
+
+        PanelComponent {
+            componentType: "gpu"
+            componentSettings: ({
+                showText: true,
+                showGpuTemperature: true,
+                temperatureUnit: "celsius"
+            })
+            cpuUsage: 0
+            smoothedCpu: 0
+            sensorReady: true
+            cpuTemperature: 0
+            temperatureReady: false
+            metrics: testCase.metrics
+            height: 32
+        }
+    }
+
+    Component {
+        id: vramFactory
+
+        PanelComponent {
+            componentType: "vram"
+            componentSettings: ({showText: true})
+            cpuUsage: 0
+            smoothedCpu: 0
+            sensorReady: true
+            cpuTemperature: 0
+            temperatureReady: false
+            metrics: testCase.metrics
+            height: 32
+        }
+    }
+
+    Component {
+        id: diskIoFactory
+
+        PanelComponent {
+            componentType: "diskio"
+            componentSettings: ({})
+            cpuUsage: 0
+            smoothedCpu: 0
+            sensorReady: true
+            cpuTemperature: 0
+            temperatureReady: false
+            metrics: testCase.metrics
+            height: 32
+        }
+    }
+
+    Component {
         id: claudeRingFactory
 
         PanelComponent {
@@ -323,5 +388,34 @@ TestCase {
         verify(withText !== null);
         verify(withText.implicitWidth > ringOnly.implicitWidth);
         compare(withText.implicitHeight, ringOnly.implicitHeight);
+    }
+
+    function test_hardware_components_fit_panel_height() {
+        const gpu = createTemporaryObject(gpuFactory, testCase);
+        const vram = createTemporaryObject(vramFactory, testCase);
+        const diskIo = createTemporaryObject(diskIoFactory, testCase);
+        verify(gpu !== null);
+        verify(vram !== null);
+        verify(diskIo !== null);
+        verify(gpu.implicitWidth > 0);
+        verify(vram.implicitWidth > 0);
+        verify(diskIo.implicitWidth > 0);
+        compare(gpu.implicitHeight, 32);
+        compare(vram.implicitHeight, 32);
+        compare(diskIo.implicitHeight, 32);
+
+        const initialGpuWidth = gpu.implicitWidth;
+        gpu.metrics = Object.assign({}, testCase.metrics, {
+            gpuUsage: 100,
+            gpuTemperature: 90
+        });
+        compare(gpu.implicitWidth, initialGpuWidth);
+
+        const initialWidth = diskIo.implicitWidth;
+        diskIo.metrics = Object.assign({}, testCase.metrics, {
+            diskReadRate: "999.9 MiB/s",
+            diskWriteRate: "1 B/s"
+        });
+        compare(diskIo.implicitWidth, initialWidth);
     }
 }

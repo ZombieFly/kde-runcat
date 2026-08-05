@@ -13,26 +13,49 @@ Item {
     required property bool downloadAvailable
     required property bool uploadAvailable
     property real spacing: Kirigami.Units.smallSpacing
+    property string iconName: "network-wired-symbolic"
+    property string downloadPrefix: "↓"
+    property string uploadPrefix: "↑"
+    property string downloadName: i18n("Download")
+    property string uploadName: i18n("Upload")
 
     readonly property string downloadText: downloadAvailable
         ? downloadRate : i18n("Unavailable")
     readonly property string uploadText: uploadAvailable
         ? uploadRate : i18n("Unavailable")
-    readonly property string shownDownloadText: i18n("↓ %1", downloadText)
-    readonly property string shownUploadText: i18n("↑ %1", uploadText)
     readonly property real iconSize: Math.min(
         height,
         Kirigami.Units.iconSizes.smallMedium
     )
     readonly property real textWidth: Kirigami.Units.gridUnit * 4
+    readonly property real prefixWidth: Math.ceil(Math.max(
+        downloadPrefixMetrics.advanceWidth,
+        uploadPrefixMetrics.advanceWidth
+    ))
 
     implicitWidth: iconSize + spacing + textWidth
     implicitHeight: Math.max(iconSize, rates.implicitHeight)
     Accessible.name: i18n(
-        "Download: %1; Upload: %2",
+        "%1: %2; %3: %4",
+        downloadName,
         downloadText,
+        uploadName,
         uploadText
     )
+
+    TextMetrics {
+        id: downloadPrefixMetrics
+
+        font: Kirigami.Theme.smallFont
+        text: root.downloadPrefix
+    }
+
+    TextMetrics {
+        id: uploadPrefixMetrics
+
+        font: Kirigami.Theme.smallFont
+        text: root.uploadPrefix
+    }
 
     Row {
         anchors.fill: parent
@@ -42,7 +65,7 @@ Item {
             width: root.iconSize
             height: width
             anchors.verticalCenter: parent.verticalCenter
-            source: "network-wired-symbolic"
+            source: root.iconName
             color: Kirigami.Theme.textColor
             opacity: root.downloadAvailable || root.uploadAvailable ? 1 : 0.45
         }
@@ -54,18 +77,42 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 0
 
-            QQC2.Label {
+            Row {
                 width: parent.width
-                font: Kirigami.Theme.smallFont
-                elide: Text.ElideRight
-                text: root.shownDownloadText
+                spacing: Kirigami.Units.smallSpacing
+
+                QQC2.Label {
+                    width: root.prefixWidth
+                    font: Kirigami.Theme.smallFont
+                    text: root.downloadPrefix
+                    horizontalAlignment: Text.AlignRight
+                }
+
+                QQC2.Label {
+                    width: parent.width - root.prefixWidth - parent.spacing
+                    font: Kirigami.Theme.smallFont
+                    elide: Text.ElideRight
+                    text: root.downloadText
+                }
             }
 
-            QQC2.Label {
+            Row {
                 width: parent.width
-                font: Kirigami.Theme.smallFont
-                elide: Text.ElideRight
-                text: root.shownUploadText
+                spacing: Kirigami.Units.smallSpacing
+
+                QQC2.Label {
+                    width: root.prefixWidth
+                    font: Kirigami.Theme.smallFont
+                    text: root.uploadPrefix
+                    horizontalAlignment: Text.AlignRight
+                }
+
+                QQC2.Label {
+                    width: parent.width - root.prefixWidth - parent.spacing
+                    font: Kirigami.Theme.smallFont
+                    elide: Text.ElideRight
+                    text: root.uploadText
+                }
             }
         }
     }
@@ -76,8 +123,10 @@ Item {
 
     QQC2.ToolTip.visible: hoverHandler.hovered
     QQC2.ToolTip.text: i18n(
-        "Download: %1\nUpload: %2",
+        "%1: %2\n%3: %4",
+        downloadName,
         downloadText,
+        uploadName,
         uploadText
     )
     QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay

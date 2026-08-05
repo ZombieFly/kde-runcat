@@ -11,6 +11,11 @@ QtObject {
     property bool memoryEnabled: false
     property bool diskEnabled: false
     property bool networkEnabled: false
+    property bool gpuEnabled: false
+    property bool gpuTemperatureEnabled: false
+    property bool vramEnabled: false
+    property bool diskIoEnabled: false
+    property string gpuTemperatureSensorId: ""
     property bool tokenUsageEnabled: false
     property int claudeContextWindow: 200000
 
@@ -42,6 +47,34 @@ QtObject {
         && downloadRate.length > 0
     readonly property bool uploadAvailable: sensorReady(uploadSensor)
         && uploadRate.length > 0
+
+    readonly property real gpuUsage: boundedPercent(gpuUsageSensor.value)
+    readonly property bool gpuUsageAvailable: sensorReady(gpuUsageSensor)
+        && Number.isFinite(Number(gpuUsageSensor.value))
+    readonly property real gpuTemperature: Number(gpuTemperatureSensor.value)
+    readonly property bool gpuTemperatureAvailable:
+        sensorReady(gpuTemperatureSensor)
+        && Number.isFinite(gpuTemperature)
+
+    readonly property real vramUsedValue: Number(vramUsedSensor.value)
+    readonly property real vramTotalValue: Number(vramTotalSensor.value)
+    readonly property real vramUsage: vramTotalValue > 0
+        ? boundedPercent(vramUsedValue / vramTotalValue * 100) : 0
+    readonly property string vramUsed: formattedValue(vramUsedSensor)
+    readonly property string vramTotal: formattedValue(vramTotalSensor)
+    readonly property bool vramUsageAvailable: sensorReady(vramUsedSensor)
+        && sensorReady(vramTotalSensor)
+        && Number.isFinite(vramUsedValue) && Number.isFinite(vramTotalValue)
+        && vramTotalValue > 0
+    readonly property bool vramDetailAvailable: vramUsageAvailable
+        && vramUsed.length > 0 && vramTotal.length > 0
+
+    readonly property string diskReadRate: formattedValue(diskReadSensor)
+    readonly property string diskWriteRate: formattedValue(diskWriteSensor)
+    readonly property bool diskReadAvailable: sensorReady(diskReadSensor)
+        && diskReadRate.length > 0
+    readonly property bool diskWriteAvailable: sensorReady(diskWriteSensor)
+        && diskWriteRate.length > 0
 
     property int codexTodayTokens: 0
     property int codexContextTokens: 0
@@ -143,6 +176,42 @@ QtObject {
     property Sensors.Sensor uploadSensor: Sensors.Sensor {
         sensorId: "network/all/upload"
         enabled: root.networkEnabled
+        updateRateLimit: 1000
+    }
+
+    property Sensors.Sensor gpuUsageSensor: Sensors.Sensor {
+        sensorId: "gpu/all/usage"
+        enabled: root.gpuEnabled
+        updateRateLimit: 1000
+    }
+
+    property Sensors.Sensor gpuTemperatureSensor: Sensors.Sensor {
+        sensorId: root.gpuTemperatureSensorId
+        enabled: root.gpuTemperatureEnabled && sensorId.length > 0
+        updateRateLimit: 1000
+    }
+
+    property Sensors.Sensor vramUsedSensor: Sensors.Sensor {
+        sensorId: "gpu/all/usedVram"
+        enabled: root.vramEnabled
+        updateRateLimit: 1000
+    }
+
+    property Sensors.Sensor vramTotalSensor: Sensors.Sensor {
+        sensorId: "gpu/all/totalVram"
+        enabled: root.vramEnabled
+        updateRateLimit: 1000
+    }
+
+    property Sensors.Sensor diskReadSensor: Sensors.Sensor {
+        sensorId: "disk/all/read"
+        enabled: root.diskIoEnabled
+        updateRateLimit: 1000
+    }
+
+    property Sensors.Sensor diskWriteSensor: Sensors.Sensor {
+        sensorId: "disk/all/write"
+        enabled: root.diskIoEnabled
         updateRateLimit: 1000
     }
 

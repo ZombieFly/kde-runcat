@@ -22,10 +22,17 @@ TestCase {
         verify(!provider.memoryUsageSensor.enabled);
         verify(!provider.diskUsageSensor.enabled);
         verify(!provider.downloadSensor.enabled);
+        verify(!provider.gpuUsageSensor.enabled);
+        verify(!provider.vramUsedSensor.enabled);
+        verify(!provider.diskReadSensor.enabled);
 
         provider.memoryEnabled = true;
         provider.diskEnabled = true;
         provider.networkEnabled = true;
+        provider.gpuEnabled = true;
+        provider.gpuTemperatureSensorId = "gpu/gpu0/temperature";
+        provider.vramEnabled = true;
+        provider.diskIoEnabled = true;
 
         verify(provider.memoryUsageSensor.enabled);
         verify(provider.memoryUsedSensor.enabled);
@@ -35,6 +42,14 @@ TestCase {
         verify(provider.diskTotalSensor.enabled);
         verify(provider.downloadSensor.enabled);
         verify(provider.uploadSensor.enabled);
+        verify(provider.gpuUsageSensor.enabled);
+        verify(!provider.gpuTemperatureSensor.enabled);
+        provider.gpuTemperatureEnabled = true;
+        verify(provider.gpuTemperatureSensor.enabled);
+        verify(provider.vramUsedSensor.enabled);
+        verify(provider.vramTotalSensor.enabled);
+        verify(provider.diskReadSensor.enabled);
+        verify(provider.diskWriteSensor.enabled);
     }
 
     function test_tokenUsageParsing() {

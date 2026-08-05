@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   usage components. Each ring can optionally show current context tokens and a
   subdued second line with today's total tokens.
 
+### Added
+
+- Added independently configurable GPU usage and temperature, video memory
+  usage, and disk I/O components using KDE's system-monitor sensors.
+
 ### Fixed
 
 - Stabilized dynamic component loading, configuration-page layout, and panel

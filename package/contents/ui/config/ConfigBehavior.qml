@@ -63,6 +63,9 @@ KCM.ScrollViewKCM {
         case "memory": return i18n("Memory usage");
         case "disk": return i18n("Disk usage");
         case "network": return i18n("Network rate");
+        case "gpu": return i18n("GPU usage");
+        case "vram": return i18n("Video memory usage");
+        case "diskio": return i18n("Disk I/O");
         case "codex": return i18n("Codex usage");
         case "claude": return i18n("Claude Code usage");
         }
@@ -75,6 +78,9 @@ KCM.ScrollViewKCM {
         case "memory": return i18n("Physical memory usage ring");
         case "disk": return i18n("Combined disk usage ring");
         case "network": return i18n("Download and upload rates");
+        case "gpu": return i18n("GPU load and temperature");
+        case "vram": return i18n("Used and total video memory");
+        case "diskio": return i18n("Disk read and write rates");
         case "codex": return i18n("Codex context and daily tokens");
         case "claude": return i18n("Claude Code context and daily tokens");
         }
@@ -87,6 +93,9 @@ KCM.ScrollViewKCM {
         case "memory": return "media-flash-symbolic";
         case "disk": return "drive-harddisk-symbolic";
         case "network": return "network-wired-symbolic";
+        case "gpu": return "video-display-symbolic";
+        case "vram": return "video-display-symbolic";
+        case "diskio": return "drive-harddisk-symbolic";
         case "codex": return "applications-science-symbolic";
         case "claude": return "applications-science-symbolic";
         }
@@ -463,10 +472,51 @@ KCM.ScrollViewKCM {
                         }
                     }
 
+                    GridLayout {
+                        Layout.fillWidth: true
+                        columns: 2
+                        visible: card.componentType === "gpu"
+
+                        Label { text: i18n("Show:") }
+                        ColumnLayout {
+                            CheckBox {
+                                text: i18n("GPU usage percentage")
+                                checked: Boolean(card.settings.showText)
+                                onClicked: root.updateSetting(
+                                    card.index, "showText", checked
+                                )
+                            }
+                            CheckBox {
+                                id: gpuTemperatureCheck
+                                text: i18n("GPU temperature")
+                                checked: Boolean(
+                                    card.settings.showGpuTemperature
+                                )
+                                onClicked: root.updateSetting(
+                                    card.index, "showGpuTemperature", checked
+                                )
+                            }
+                        }
+
+                        Label { text: i18n("Temperature unit:") }
+                        ComboBox {
+                            enabled: gpuTemperatureCheck.checked
+                            model: [i18n("Celsius (°C)"), i18n("Fahrenheit (°F)")]
+                            currentIndex: card.settings.temperatureUnit
+                                === "fahrenheit" ? 1 : 0
+                            onActivated: root.updateSetting(
+                                card.index,
+                                "temperatureUnit",
+                                currentIndex === 1 ? "fahrenheit" : "celsius"
+                            )
+                        }
+                    }
+
                     CheckBox {
                         Layout.fillWidth: true
                         visible: card.componentType === "memory"
                             || card.componentType === "disk"
+                            || card.componentType === "vram"
                             || card.componentType === "codex"
                             || card.componentType === "claude"
                         text: card.componentType === "codex"

@@ -57,6 +57,14 @@ removed, configured, and reordered independently:
   on the second line.
 - **Network rate** — Shows the current aggregate download rate on the first
   line and upload rate on the second line.
+- **GPU usage** — The ring shows aggregate GPU load. Optional text shows the
+  current usage percentage. GPU temperature is a separate option, disabled by
+  default, and uses the same units and color thresholds as CPU temperature.
+- **Video memory usage** — The ring shows the percentage of video memory in
+  use. Optional text shows used video memory on the first line and total video
+  memory on the second line.
+- **Disk I/O** — Shows the current aggregate disk read rate (`R`) on the first
+  line and write rate (`W`) on the second line.
 - **Codex usage** — The ring shows current context tokens as a percentage of
   the context window. Optional text shows current context tokens on the first
   line and today's total tokens on the second line.

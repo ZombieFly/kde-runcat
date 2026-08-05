@@ -20,25 +20,34 @@ Item {
     required property bool detailAvailable
     property bool showText: false
     property real spacing: Kirigami.Units.smallSpacing
+    property bool firstLineAvailable: detailAvailable
+    property bool secondLineAvailable: detailAvailable
+    property bool firstLineVisible: true
+    property bool secondLineVisible: true
+    property real reservedTextWidth: 0
+    property color secondLineColor: Kirigami.Theme.textColor
+    property real secondLineOpacity: 0.7
 
-    readonly property string shownUsedText: detailAvailable
+    readonly property string shownUsedText: firstLineAvailable
         && usedText.length > 0 ? usedText : i18n("Unavailable")
-    readonly property string shownTotalText: detailAvailable
+    readonly property string shownTotalText: secondLineAvailable
         && totalText.length > 0 ? totalText : i18n("Unavailable")
-    readonly property string detailText: detailAvailable
-        ? i18n(
-            "%1 / %2",
-            shownUsedText,
-            shownTotalText
-        )
-        : i18n("Unavailable")
+    readonly property string detailText: !detailAvailable
+        ? i18n("Unavailable")
+        : firstLineVisible && secondLineVisible
+            ? i18n("%1 / %2", shownUsedText, shownTotalText)
+            : firstLineVisible ? shownUsedText : shownTotalText
     readonly property string accessibleText: usageAvailable
         ? i18n("%1: %2%, %3", title, Math.round(usage), detailText)
-        : i18n("%1: unavailable", title)
-    readonly property real textWidth: Math.ceil(Math.max(
-        usedTextMetrics.advanceWidth,
-        totalTextMetrics.advanceWidth
-    ))
+        : detailAvailable
+            ? i18n("%1: %2", title, detailText)
+            : i18n("%1: unavailable", title)
+    readonly property real textWidth: reservedTextWidth > 0
+        ? reservedTextWidth
+        : Math.ceil(Math.max(
+            firstLineVisible ? usedTextMetrics.advanceWidth : 0,
+            secondLineVisible ? totalTextMetrics.advanceWidth : 0
+        ))
 
     implicitWidth: ringSize + (showText ? spacing + textWidth : 0)
     implicitHeight: ringSize
@@ -107,9 +116,11 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 0
             visible: root.showText
+                && (root.firstLineVisible || root.secondLineVisible)
 
             QQC2.Label {
                 width: parent.width
+                visible: root.firstLineVisible
                 font: Kirigami.Theme.smallFont
                 elide: Text.ElideRight
                 text: root.shownUsedText
@@ -117,9 +128,11 @@ Item {
 
             QQC2.Label {
                 width: parent.width
+                visible: root.secondLineVisible
                 font: Kirigami.Theme.smallFont
                 elide: Text.ElideRight
-                opacity: 0.7
+                color: root.secondLineColor
+                opacity: root.secondLineOpacity
                 text: root.shownTotalText
             }
         }

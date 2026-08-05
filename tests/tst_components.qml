@@ -20,6 +20,10 @@ TestCase {
     function test_ring_components_hide_text_by_default() {
         compare(Components.defaultSettings("memory").showText, false);
         compare(Components.defaultSettings("disk").showText, false);
+        compare(Components.defaultSettings("gpu").showText, false);
+        compare(Components.defaultSettings("gpu").showGpuTemperature, false);
+        compare(Components.defaultSettings("gpu").temperatureUnit, "celsius");
+        compare(Components.defaultSettings("vram").showText, false);
         compare(Components.defaultSettings("codex").showText, false);
         compare(Components.defaultSettings("claude").showText, false);
         compare(Components.defaultSettings("claude").contextWindow, 200000);
@@ -27,14 +31,26 @@ TestCase {
         const value = Components.normalize([
             {type: "memory", settings: {showText: true}},
             {type: "disk", settings: {}},
+            {type: "gpu", settings: {
+                showText: false,
+                showGpuTemperature: true,
+                temperatureUnit: "fahrenheit"
+            }},
+            {type: "vram", settings: {showText: false}},
+            {type: "diskio", settings: {}},
             {type: "codex", settings: {showText: true}},
             {type: "claude", settings: {contextWindow: 400000}}
         ]);
         compare(value[0].settings.showText, true);
         compare(value[1].settings.showText, false);
-        compare(value[2].settings.showText, true);
+        compare(value[2].settings.showText, false);
+        compare(value[2].settings.showGpuTemperature, true);
+        compare(value[2].settings.temperatureUnit, "fahrenheit");
         compare(value[3].settings.showText, false);
-        compare(value[3].settings.contextWindow, 400000);
+        compare(value[4].type, "diskio");
+        compare(value[5].settings.showText, true);
+        compare(value[6].settings.showText, false);
+        compare(value[6].settings.contextWindow, 400000);
     }
 
     function test_normalize_preserves_order_and_settings() {
