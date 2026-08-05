@@ -55,7 +55,6 @@ KCM.ScrollViewKCM {
     property bool cfg_reverseSpeedDefault
 
     readonly property var runnerIds: RunnerSelection.availableRunnerIds()
-    property int draggedIndex: -1
     property bool initializing: true
 
     function titleFor(type) {
@@ -199,6 +198,9 @@ KCM.ScrollViewKCM {
     }
 
     function removeComponent(index) {
+        if (componentModel.count <= 1) {
+            return;
+        }
         componentModel.remove(index);
         saveModel();
     }
@@ -209,7 +211,6 @@ KCM.ScrollViewKCM {
             return;
         }
         componentModel.move(from, to, 1);
-        draggedIndex = to;
         saveModel();
     }
 
@@ -266,22 +267,6 @@ KCM.ScrollViewKCM {
                     }
                 }
 
-                Drag.active: dragHandler.active
-                Drag.source: card
-                Drag.hotSpot.x: width / 2
-                Drag.hotSpot.y: height / 2
-                opacity: dragHandler.active ? 0.75 : 1
-                z: dragHandler.active ? 2 : 0
-
-                DropArea {
-                    anchors.fill: parent
-                    onEntered: function(drag) {
-                        if (root.draggedIndex >= 0) {
-                            root.moveComponent(root.draggedIndex, card.index);
-                        }
-                    }
-                }
-
                 contentItem: ColumnLayout {
                     id: contentColumn
 
@@ -332,25 +317,10 @@ KCM.ScrollViewKCM {
                         }
 
                         ToolButton {
-                            id: dragHandle
-                            icon.name: "transform-move-symbolic"
-                            text: i18n("Drag to reorder")
-                            display: AbstractButton.IconOnly
-                            ToolTip.text: text
-                            ToolTip.visible: hovered
-
-                            DragHandler {
-                                id: dragHandler
-                                target: card
-                                onActiveChanged: root.draggedIndex = active
-                                    ? card.index : -1
-                            }
-                        }
-
-                        ToolButton {
                             icon.name: "edit-delete-symbolic"
                             text: i18n("Remove")
                             display: AbstractButton.IconOnly
+                            enabled: componentModel.count > 1
                             onClicked: root.removeComponent(card.index)
                             ToolTip.text: text
                             ToolTip.visible: hovered
