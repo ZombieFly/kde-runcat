@@ -16,9 +16,9 @@ TestCase {
     }
 
     function test_uses_celsius_thresholds() {
-        compare(Temperature.color(50.1), "#f67400");
-        compare(Temperature.color(69.9), "#f67400");
-        compare(Temperature.color(70), "#da4453");
+        compare(Temperature.color(60), "#f67400");
+        compare(Temperature.color(89.9), "#f67400");
+        compare(Temperature.color(90), "#da4453");
     }
 
     function test_normalizes_unit() {

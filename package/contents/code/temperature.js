@@ -20,7 +20,7 @@ function unavailable(unit) {
 }
 
 function color(celsius) {
-    if (celsius < 70) {
+    if (celsius < 90) {
         return "#f67400";
     }
     return "#da4453";

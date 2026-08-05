@@ -48,7 +48,7 @@ Item {
         ? Temperature.format(cpuTemperature, temperatureUnit)
         : Temperature.unavailable(temperatureUnit)
     readonly property bool temperatureIsCool: temperatureReady
-        && cpuTemperature <= 50
+        && cpuTemperature < 60
     readonly property color temperatureColor: !temperatureReady
         || temperatureIsCool
         ? Kirigami.Theme.textColor
