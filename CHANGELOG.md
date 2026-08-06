@@ -9,28 +9,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
-- Reworked RunCat into a modular panel widget whose Runner, memory, disk,
-  network, Codex usage, and Claude Code usage components can be added, removed,
-  configured, and reordered independently. New installations start with only
-  the Runner; memory and disk use compact icon-centered rings, and optional
-  Codex and Claude Code usage is read from local session data. CPU temperature
-  is now an optional, color-coded Celsius or Fahrenheit line within the Runner,
-  and the separate dashboard was removed now that relevant information can be
-  shown directly in the panel.
-- Split AI usage into independently configurable Codex usage and Claude Code
-  usage components. Each ring can optionally show current context tokens and a
-  subdued second line with today's total tokens.
+#### Multi-component monitoring
+
+RunCat has been reworked into a modular panel widget. Monitoring components can
+be added, removed, configured, and reordered independently, so the panel can be
+tailored to the information you want to see. New installations start with only
+the Runner enabled.
+
+Available components:
+
+- **Runner** — CPU-responsive animation, optional CPU usage, and optional CPU
+  temperature.
+- **Memory usage** — Physical memory usage ring with used and total values.
+- **Disk usage** — Combined disk capacity usage ring with used and total values.
+- **Network rate** — Aggregate download and upload rates.
+- **GPU usage** — GPU load with optional GPU temperature.
+- **Video memory usage** — Used and total video memory.
+- **Disk I/O** — Aggregate read and write rates.
+- **Codex usage** — Current context and today's local token usage.
+- **Claude Code usage** — Current context and today's local token usage.
+
+The former expanded dashboard has been removed; relevant information is now
+shown directly in the panel.
+
+#### Other changes
+
+- Moved CPU temperature into the Runner component; it supports Celsius or
+  Fahrenheit and color-coded temperature levels.
+- Standardized alignment and numeric formatting across percentages, capacities,
+  rates, temperatures, and token counts.
+- Memory and disk indicators now use compact icon-centered rings with distinct
+  colors for each metric.
 
 ### Added
 
-- Added independently configurable GPU usage and temperature, video memory
-  usage, and disk I/O components using KDE's system-monitor sensors.
-
-### Fixed
-
-- Stabilized dynamic component loading, configuration-page layout, and panel
-  sizing while preserving existing settings during migration.
-- Removed the overlapping widget tooltip when hovering individual components.
+- Optional local Codex and Claude Code usage indicators, including separate
+  context rings and daily token totals.
+- Theme-aware RunCat logo for the KDE widget explorer and panel metadata.
 
 ## [0.3.0] - 2026-08-05
 
