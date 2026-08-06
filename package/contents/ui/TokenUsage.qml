@@ -5,7 +5,7 @@ import QtQuick.Controls as QQC2
 
 import org.kde.kirigami as Kirigami
 
-import "../code/token_format.js" as TokenFormat
+import "../code/value_format.js" as ValueFormat
 
 Item {
     id: root
@@ -27,29 +27,19 @@ Item {
     readonly property real percent: contextWindow > 0
         ? Math.max(0, Math.min(100, contextTokens / contextWindow * 100)) : 0
     readonly property string contextText: available
-        ? TokenFormat.formatTokens(contextTokens) : i18n("Unavailable")
+        ? ValueFormat.formatTokens(contextTokens) : i18n("Unavailable")
     readonly property string todayText: available
-        ? TokenFormat.formatTokens(todayTokens) : i18n("Unavailable")
-    readonly property real textWidth: Math.ceil(Math.max(
-        contextTextMetrics.advanceWidth,
-        todayTextMetrics.advanceWidth
-    ))
+        ? ValueFormat.formatTokens(todayTokens) : i18n("Unavailable")
+    readonly property real textWidth: Math.ceil(tokenTextMetrics.advanceWidth)
 
     implicitWidth: gaugeSize + (showText ? spacing + textWidth : 0)
     implicitHeight: gaugeSize
 
     TextMetrics {
-        id: contextTextMetrics
+        id: tokenTextMetrics
 
-        font: Kirigami.Theme.smallFont
-        text: root.contextText
-    }
-
-    TextMetrics {
-        id: todayTextMetrics
-
-        font: Kirigami.Theme.smallFont
-        text: root.todayText
+        font: ValueFormat.tabularFont(Kirigami.Theme.smallFont)
+        text: ValueFormat.widestTokenText()
     }
 
     Row {
@@ -78,17 +68,19 @@ Item {
 
             QQC2.Label {
                 width: parent.width
-                font: Kirigami.Theme.smallFont
+                font: ValueFormat.tabularFont(Kirigami.Theme.smallFont)
                 elide: Text.ElideRight
                 text: root.contextText
+                horizontalAlignment: Text.AlignLeft
             }
 
             QQC2.Label {
                 width: parent.width
-                font: Kirigami.Theme.smallFont
+                font: ValueFormat.tabularFont(Kirigami.Theme.smallFont)
                 elide: Text.ElideRight
                 opacity: 0.7
                 text: root.todayText
+                horizontalAlignment: Text.AlignLeft
             }
         }
     }

@@ -12,7 +12,8 @@ function suffix(unit) {
 }
 
 function format(celsius, unit) {
-    return Math.round(convert(celsius, unit)) + "°" + suffix(unit);
+    return Math.min(999, Math.round(convert(celsius, unit)))
+        + "°" + suffix(unit);
 }
 
 function unavailable(unit) {

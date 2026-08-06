@@ -12,6 +12,8 @@ TestCase {
         compare(Temperature.convert(42, "celsius"), 42);
         compare(Temperature.format(55, "celsius"), "55°C");
         compare(Temperature.format(55, "fahrenheit"), "131°F");
+        compare(Temperature.format(1000, "celsius"), "999°C");
+        compare(Temperature.format(1000, "fahrenheit"), "999°F");
         compare(Temperature.unavailable("celsius"), "--°C");
     }
 

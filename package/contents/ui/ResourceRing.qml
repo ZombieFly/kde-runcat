@@ -6,6 +6,8 @@ import QtQuick.Controls as QQC2
 import org.kde.kirigami as Kirigami
 import org.kde.quickcharts as Charts
 
+import "../code/value_format.js" as ValueFormat
+
 Item {
     id: root
 
@@ -44,27 +46,17 @@ Item {
             : i18n("%1: unavailable", title)
     readonly property real textWidth: reservedTextWidth > 0
         ? reservedTextWidth
-        : Math.ceil(Math.max(
-            firstLineVisible ? usedTextMetrics.advanceWidth : 0,
-            secondLineVisible ? totalTextMetrics.advanceWidth : 0
-        ))
+        : Math.ceil(valueTextMetrics.advanceWidth)
 
     implicitWidth: ringSize + (showText ? spacing + textWidth : 0)
     implicitHeight: ringSize
     Accessible.name: accessibleText
 
     TextMetrics {
-        id: usedTextMetrics
+        id: valueTextMetrics
 
-        font: Kirigami.Theme.smallFont
-        text: root.shownUsedText
-    }
-
-    TextMetrics {
-        id: totalTextMetrics
-
-        font: Kirigami.Theme.smallFont
-        text: root.shownTotalText
+        font: ValueFormat.tabularFont(Kirigami.Theme.smallFont)
+        text: ValueFormat.widestBinaryText(false)
     }
 
     Row {
@@ -121,19 +113,21 @@ Item {
             QQC2.Label {
                 width: parent.width
                 visible: root.firstLineVisible
-                font: Kirigami.Theme.smallFont
+                font: ValueFormat.tabularFont(Kirigami.Theme.smallFont)
                 elide: Text.ElideRight
                 text: root.shownUsedText
+                horizontalAlignment: Text.AlignLeft
             }
 
             QQC2.Label {
                 width: parent.width
                 visible: root.secondLineVisible
-                font: Kirigami.Theme.smallFont
+                font: ValueFormat.tabularFont(Kirigami.Theme.smallFont)
                 elide: Text.ElideRight
                 color: root.secondLineColor
                 opacity: root.secondLineOpacity
                 text: root.shownTotalText
+                horizontalAlignment: Text.AlignLeft
             }
         }
     }

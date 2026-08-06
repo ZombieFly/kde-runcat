@@ -5,6 +5,8 @@ import QtQuick.Controls as QQC2
 
 import org.kde.kirigami as Kirigami
 
+import "../code/value_format.js" as ValueFormat
+
 Item {
     id: root
 
@@ -27,11 +29,13 @@ Item {
         height,
         Kirigami.Units.iconSizes.smallMedium
     )
-    readonly property real textWidth: Kirigami.Units.gridUnit * 4
+    readonly property real valueWidth: Math.ceil(rateTextMetrics.advanceWidth)
     readonly property real prefixWidth: Math.ceil(Math.max(
         downloadPrefixMetrics.advanceWidth,
         uploadPrefixMetrics.advanceWidth
     ))
+    readonly property real textWidth: prefixWidth
+        + Kirigami.Units.smallSpacing + valueWidth
 
     implicitWidth: iconSize + spacing + textWidth
     implicitHeight: Math.max(iconSize, rates.implicitHeight)
@@ -55,6 +59,13 @@ Item {
 
         font: Kirigami.Theme.smallFont
         text: root.uploadPrefix
+    }
+
+    TextMetrics {
+        id: rateTextMetrics
+
+        font: ValueFormat.tabularFont(Kirigami.Theme.smallFont)
+        text: ValueFormat.widestBinaryText(true)
     }
 
     Row {
@@ -85,14 +96,15 @@ Item {
                     width: root.prefixWidth
                     font: Kirigami.Theme.smallFont
                     text: root.downloadPrefix
-                    horizontalAlignment: Text.AlignRight
+                    horizontalAlignment: Text.AlignLeft
                 }
 
                 QQC2.Label {
-                    width: parent.width - root.prefixWidth - parent.spacing
-                    font: Kirigami.Theme.smallFont
+                    width: root.valueWidth
+                    font: ValueFormat.tabularFont(Kirigami.Theme.smallFont)
                     elide: Text.ElideRight
                     text: root.downloadText
+                    horizontalAlignment: Text.AlignLeft
                 }
             }
 
@@ -104,14 +116,15 @@ Item {
                     width: root.prefixWidth
                     font: Kirigami.Theme.smallFont
                     text: root.uploadPrefix
-                    horizontalAlignment: Text.AlignRight
+                    horizontalAlignment: Text.AlignLeft
                 }
 
                 QQC2.Label {
-                    width: parent.width - root.prefixWidth - parent.spacing
-                    font: Kirigami.Theme.smallFont
+                    width: root.valueWidth
+                    font: ValueFormat.tabularFont(Kirigami.Theme.smallFont)
                     elide: Text.ElideRight
                     text: root.uploadText
+                    horizontalAlignment: Text.AlignLeft
                 }
             }
         }

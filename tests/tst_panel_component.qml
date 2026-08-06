@@ -331,6 +331,7 @@ TestCase {
         verify(withTemperature !== null);
         compare(withTemperature.implicitHeight, withCpu.implicitHeight);
         verify(withTemperature.implicitWidth >= withCpu.implicitWidth);
+        compare(withTemperature.cpuUsageText, "42%");
         compare(withTemperature.temperatureText, "55°C");
         verify(withTemperature.temperatureIsCool);
 
@@ -341,6 +342,8 @@ TestCase {
         compare(withTemperature.temperatureColor.toString(), "#f67400");
         withTemperature.cpuTemperature = 90;
         compare(withTemperature.temperatureColor.toString(), "#da4453");
+        withTemperature.cpuTemperature = 1000;
+        compare(withTemperature.temperatureText, "999°C");
     }
 
     function test_resource_text_adds_width_without_growing_ring() {

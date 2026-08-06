@@ -20,6 +20,7 @@ check:
 		$(PACKAGE_DIR)/contents/ui/TokenRing.qml \
 		$(PACKAGE_DIR)/contents/ui/config/ConfigBehavior.qml \
 		$(PACKAGE_DIR)/contents/config/config.qml \
+		$(PACKAGE_DIR)/contents/code/value_format.js \
 		tests/tst_animation.qml \
 		tests/tst_components.qml \
 		tests/tst_metrics_provider.qml \

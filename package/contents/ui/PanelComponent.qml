@@ -9,6 +9,7 @@ import org.kde.kirigami as Kirigami
 import "../code/animation.js" as Animation
 import "../code/runners.js" as RunnerSelection
 import "../code/temperature.js" as Temperature
+import "../code/value_format.js" as ValueFormat
 
 Item {
     id: root
@@ -48,6 +49,8 @@ Item {
     readonly property string temperatureText: temperatureReady
         ? Temperature.format(cpuTemperature, temperatureUnit)
         : Temperature.unavailable(temperatureUnit)
+    readonly property string cpuUsageText: sensorReady
+        ? ValueFormat.formatPercent(cpuUsage) : i18n("--%")
     readonly property bool temperatureIsCool: temperatureReady
         && cpuTemperature < 60
     readonly property color temperatureColor: !temperatureReady
@@ -95,8 +98,8 @@ Item {
     TextMetrics {
         id: cpuMetrics
 
-        font: root.showCpuTemperature
-            ? Kirigami.Theme.smallFont : Kirigami.Theme.defaultFont
+        font: ValueFormat.tabularFont(root.showCpuTemperature
+            ? Kirigami.Theme.smallFont : Kirigami.Theme.defaultFont)
         // This is only a width sentinel, not user-facing text.
         text: "100%"
     }
@@ -104,8 +107,8 @@ Item {
     TextMetrics {
         id: temperatureMetrics
 
-        font: Kirigami.Theme.smallFont
-        text: root.temperatureUnit === "fahrenheit" ? "212°F" : "100°C"
+        font: ValueFormat.tabularFont(Kirigami.Theme.smallFont)
+        text: root.temperatureUnit === "fahrenheit" ? "999°F" : "999°C"
     }
 
     Loader {
@@ -254,13 +257,11 @@ Item {
 
                         width: parent.width
                         visible: Boolean(root.componentSettings.showCpuUsage)
-                        font: root.showCpuTemperature
+                        font: ValueFormat.tabularFont(root.showCpuTemperature
                             ? Kirigami.Theme.smallFont
-                            : Kirigami.Theme.defaultFont
-                        text: root.sensorReady
-                            ? i18n("%1%", Math.round(root.cpuUsage))
-                            : i18n("--%")
-                        horizontalAlignment: Text.AlignRight
+                            : Kirigami.Theme.defaultFont)
+                        text: root.cpuUsageText
+                        horizontalAlignment: Text.AlignLeft
                     }
 
                     QQC2.Label {
@@ -268,11 +269,13 @@ Item {
 
                         width: parent.width
                         visible: root.showCpuTemperature
-                        font: Kirigami.Theme.smallFont
+                        font: ValueFormat.tabularFont(
+                            Kirigami.Theme.smallFont
+                        )
                         text: root.temperatureText
                         color: root.temperatureColor
                         opacity: root.temperatureIsCool ? 0.7 : 1
-                        horizontalAlignment: Text.AlignRight
+                        horizontalAlignment: Text.AlignLeft
                     }
                 }
             }
@@ -375,7 +378,7 @@ Item {
             color: "#9b59b6"
             usage: root.metrics.gpuUsage
             usedText: root.metrics.gpuUsageAvailable
-                ? i18n("%1%", Math.round(root.metrics.gpuUsage)) : ""
+                ? ValueFormat.formatPercent(root.metrics.gpuUsage) : ""
             totalText: showTemperature && root.metrics.gpuTemperatureAvailable
                 ? Temperature.format(
                     root.metrics.gpuTemperature, temperatureUnit

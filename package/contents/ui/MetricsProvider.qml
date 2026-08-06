@@ -5,6 +5,8 @@ import QtQuick
 import org.kde.ksysguard.sensors as Sensors
 import org.kde.plasma.plasma5support as Plasma5Support
 
+import "../code/value_format.js" as ValueFormat
+
 QtObject {
     id: root
 
@@ -20,8 +22,8 @@ QtObject {
     property int claudeContextWindow: 200000
 
     readonly property real memoryUsage: boundedPercent(memoryUsageSensor.value)
-    readonly property string memoryUsed: formattedValue(memoryUsedSensor)
-    readonly property string memoryTotal: formattedValue(memoryTotalSensor)
+    readonly property string memoryUsed: formattedBytes(memoryUsedSensor)
+    readonly property string memoryTotal: formattedBytes(memoryTotalSensor)
     readonly property bool memoryUsageAvailable:
         sensorReady(memoryUsageSensor)
         && Number.isFinite(Number(memoryUsageSensor.value))
@@ -31,8 +33,8 @@ QtObject {
         && memoryUsed.length > 0 && memoryTotal.length > 0
 
     readonly property real diskUsage: boundedPercent(diskUsageSensor.value)
-    readonly property string diskUsed: formattedValue(diskUsedSensor)
-    readonly property string diskTotal: formattedValue(diskTotalSensor)
+    readonly property string diskUsed: formattedBytes(diskUsedSensor)
+    readonly property string diskTotal: formattedBytes(diskTotalSensor)
     readonly property bool diskUsageAvailable:
         sensorReady(diskUsageSensor)
         && Number.isFinite(Number(diskUsageSensor.value))
@@ -41,8 +43,8 @@ QtObject {
         && sensorReady(diskTotalSensor)
         && diskUsed.length > 0 && diskTotal.length > 0
 
-    readonly property string downloadRate: formattedValue(downloadSensor)
-    readonly property string uploadRate: formattedValue(uploadSensor)
+    readonly property string downloadRate: formattedRate(downloadSensor)
+    readonly property string uploadRate: formattedRate(uploadSensor)
     readonly property bool downloadAvailable: sensorReady(downloadSensor)
         && downloadRate.length > 0
     readonly property bool uploadAvailable: sensorReady(uploadSensor)
@@ -60,8 +62,8 @@ QtObject {
     readonly property real vramTotalValue: Number(vramTotalSensor.value)
     readonly property real vramUsage: vramTotalValue > 0
         ? boundedPercent(vramUsedValue / vramTotalValue * 100) : 0
-    readonly property string vramUsed: formattedValue(vramUsedSensor)
-    readonly property string vramTotal: formattedValue(vramTotalSensor)
+    readonly property string vramUsed: formattedBytes(vramUsedSensor)
+    readonly property string vramTotal: formattedBytes(vramTotalSensor)
     readonly property bool vramUsageAvailable: sensorReady(vramUsedSensor)
         && sensorReady(vramTotalSensor)
         && Number.isFinite(vramUsedValue) && Number.isFinite(vramTotalValue)
@@ -69,8 +71,8 @@ QtObject {
     readonly property bool vramDetailAvailable: vramUsageAvailable
         && vramUsed.length > 0 && vramTotal.length > 0
 
-    readonly property string diskReadRate: formattedValue(diskReadSensor)
-    readonly property string diskWriteRate: formattedValue(diskWriteSensor)
+    readonly property string diskReadRate: formattedRate(diskReadSensor)
+    readonly property string diskWriteRate: formattedRate(diskWriteSensor)
     readonly property bool diskReadAvailable: sensorReady(diskReadSensor)
         && diskReadRate.length > 0
     readonly property bool diskWriteAvailable: sensorReady(diskWriteSensor)
@@ -107,8 +109,16 @@ QtObject {
             ? Math.max(0, Math.min(100, value)) : 0;
     }
 
-    function formattedValue(sensor) {
-        return sensorReady(sensor) ? String(sensor.formattedValue || "") : "";
+    function formattedBytes(sensor) {
+        const value = Number(sensor.value);
+        return sensorReady(sensor) && Number.isFinite(value)
+            ? ValueFormat.formatBytes(value) : "";
+    }
+
+    function formattedRate(sensor) {
+        const value = Number(sensor.value);
+        return sensorReady(sensor) && Number.isFinite(value)
+            ? ValueFormat.formatRate(value) : "";
     }
 
     function shellQuote(value) {
