@@ -16,6 +16,18 @@ TestCase {
         MetricsProvider {}
     }
 
+    function test_tokenUsageStartsAtZero() {
+        const provider = createTemporaryObject(providerFactory, testCase);
+        verify(provider !== null);
+
+        verify(provider.codexAvailable);
+        compare(provider.codexTodayTokens, 0);
+        compare(provider.codexContextTokens, 0);
+        verify(provider.claudeAvailable);
+        compare(provider.claudeTodayTokens, 0);
+        compare(provider.claudeContextTokens, 0);
+    }
+
     function test_sensorSubscriptionsFollowConfiguredComponents() {
         const provider = createTemporaryObject(providerFactory, testCase);
         verify(provider !== null);

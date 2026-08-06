@@ -81,8 +81,11 @@ QtObject {
     property int codexContextWindow: 0
     property int claudeTodayTokens: 0
     property int claudeContextTokens: 0
-    property bool codexAvailable: false
-    property bool claudeAvailable: false
+    // Treat the initial zero values as valid while the first asynchronous
+    // token-usage query is still running. A completed query can still mark a
+    // provider unavailable when no local usage data can be read.
+    property bool codexAvailable: true
+    property bool claudeAvailable: true
     property string codexUpdatedAt: ""
     property string claudeUpdatedAt: ""
 
