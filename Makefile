@@ -8,6 +8,7 @@ QMLTESTRUNNER := $(or $(shell command -v qmltestrunner6 2>/dev/null),$(shell com
 
 check:
 	jq empty $(PACKAGE_DIR)/metadata.json
+	test -f "$(PACKAGE_DIR)/contents$$(jq -r '.KPlugin.Icon' $(PACKAGE_DIR)/metadata.json)"
 	xmllint --noout $(PACKAGE_DIR)/contents/config/main.xml
 	find $(PACKAGE_DIR)/contents/images -name '*.svg' -exec xmllint --noout {} +
 	$(QMLLINT) -I /usr/lib/qt6/qml \
