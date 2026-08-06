@@ -43,6 +43,8 @@ make reload
 
 ## Components
 
+![RunCat Components](assets/components.png)
+
 New installations start with only the Runner. Every component can be added,
 removed, configured, and reordered independently:
 
