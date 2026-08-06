@@ -28,6 +28,7 @@ jobs:
             libksysguard \
             libxml2 \
             make \
+            plasma5support \
             plasma-workspace \
             qt6-declarative \
             zip
