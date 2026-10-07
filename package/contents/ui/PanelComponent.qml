@@ -171,7 +171,7 @@ Item {
                         && root.smoothedCpu <= Number(
                             root.componentSettings.idleThreshold || 0
                         )
-                    readonly property real frameInterval:
+                    readonly property int frameInterval: Math.ceil(
                         Animation.frameInterval(
                             root.smoothedCpu,
                             runningFrames.length,
@@ -181,6 +181,7 @@ Item {
                             Boolean(root.componentSettings.reverseSpeed),
                             Number(root.componentSettings.speedPercent || 100)
                         )
+                    )
                     property int frameIndex: 0
 
                     width: Math.min(root.runnerImplicitWidth,
