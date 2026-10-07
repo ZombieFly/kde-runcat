@@ -162,8 +162,8 @@ Item {
                                 );
                             }
                         )
-                    readonly property url idleFrame: runnerId === "cat"
-                        ? Qt.resolvedUrl("../images/cat/idle.png")
+                    readonly property url idleFrame: RunnerSelection.hasIdleFrame(runnerId)
+                        ? Qt.resolvedUrl("../images/" + runner.runnerId + "/idle.png")
                         : runningFrames[0]
                     readonly property bool isIdle:
                         Boolean(root.componentSettings.useIdleFrame)
@@ -177,7 +177,7 @@ Item {
                             runningFrames.length,
                             2500,
                             150,
-                            30,
+                            60,
                             Boolean(root.componentSettings.reverseSpeed),
                             Number(root.componentSettings.speedPercent || 100)
                         )
@@ -211,7 +211,7 @@ Item {
                             cache: true
                             visible: !runner.isIdle
                                 && index === runner.frameIndex
-                            layer.enabled: true
+                            layer.enabled: !RunnerSelection.isColored(runner.runnerId)
                             layer.effect: MultiEffect {
                                 brightness: 1
                                 colorization: 1
@@ -227,7 +227,7 @@ Item {
                         asynchronous: false
                         cache: true
                         visible: runner.isIdle
-                        layer.enabled: true
+                        layer.enabled: !RunnerSelection.isColored(runner.runnerId)
                         layer.effect: MultiEffect {
                             brightness: 1
                             colorization: 1

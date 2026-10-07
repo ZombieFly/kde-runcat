@@ -71,3 +71,13 @@ function aspectRatio(runnerId) {
     const runner = runners[normalizeRunnerId(runnerId)];
     return runner.width / runner.height;
 }
+
+function isColored(runnerId) {
+    const runner = runners[normalizeRunnerId(runnerId)];
+    return Boolean(runner && runner.colored);
+}
+
+function hasIdleFrame(runnerId) {
+    const runner = runners[normalizeRunnerId(runnerId)];
+    return Boolean(runner && (runner.hasIdle || normalizeRunnerId(runnerId) === "cat"));
+}
