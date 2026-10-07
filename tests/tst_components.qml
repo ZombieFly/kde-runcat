@@ -93,6 +93,11 @@ TestCase {
         compare(value[1].type, "runner");
         compare(value[1].settings.runner, "dog");
         compare(value[1].settings.showCpuUsage, true);
+
+        const ds = Components.normalize([
+            {type: "runner", settings: {runner: "ds-chan"}}
+        ]);
+        compare(ds[0].settings.runner, "ds-chan");
     }
 
     function test_cpu_without_runner_restores_runner_at_cpu_position() {

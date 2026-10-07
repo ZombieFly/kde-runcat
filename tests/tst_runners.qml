@@ -15,7 +15,8 @@ TestCase {
             "coffee",
             "newton-cradle",
             "engine",
-            "mochi"
+            "mochi",
+            "ds-chan"
         ]);
     }
 
@@ -38,5 +39,15 @@ TestCase {
         compare(RunnerSelection.aspectRatio("cat"), 56 / 36);
         compare(RunnerSelection.aspectRatio("engine"), 83 / 36);
         compare(RunnerSelection.aspectRatio("unknown"), 56 / 36);
+    }
+
+    function test_dsChanProperties() {
+        verify(RunnerSelection.isColored("ds-chan"));
+        compare(RunnerSelection.isColored("cat"), false);
+        verify(RunnerSelection.hasIdleFrame("ds-chan"));
+        compare(RunnerSelection.frameOrder("ds-chan").length, 24);
+        compare(RunnerSelection.frameOrder("ds-chan")[0], 0);
+        compare(RunnerSelection.frameOrder("ds-chan")[23], 23);
+        compare(RunnerSelection.aspectRatio("ds-chan"), 488 / 410);
     }
 }
