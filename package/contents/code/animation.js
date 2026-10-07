@@ -28,7 +28,7 @@ function frameInterval(cpuUsage, frameCount, slowCycleMs, fastCycleMs, maxFps,
     const speedScale = Number.isFinite(numericSpeed)
         ? clamp(numericSpeed, 25, 200) / 100
         : 1;
-    const fps = Math.max(1, maxFps) * Math.max(1, speedScale);
+    const fps = Math.max(1, maxFps);
     const desired = cycleDuration(
         cpuUsage,
         slowCycleMs,

@@ -71,4 +71,10 @@ TestCase {
         compare(Animation.frameInterval(0, 5, 2500, 250, 60, false, 0), 2000);
         compare(Animation.frameInterval(0, 5, 2500, 250, 60, false, 500), 250);
     }
+
+    function test_frameInterval_speedScale_does_not_exceed_max_fps() {
+        // Even with 200% speed, frame rate must never exceed maxFps (e.g. 60 FPS -> 1000/60 ms)
+        fuzzyCompare(Animation.frameInterval(100, 5, 2500, 50, 60, false, 200),
+                     1000 / 60, 0.001);
+    }
 }
