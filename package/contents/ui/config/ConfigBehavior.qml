@@ -351,7 +351,7 @@ KCM.ScrollViewKCM {
                                 i18n("Cat"), i18n("Dog"), i18n("Slime"),
                                 i18n("Drop"), i18n("Coffee"),
                                 i18n("Newton's cradle"), i18n("Engine"),
-                                i18n("Mochi"), i18n("DS-Chan")
+                                i18n("Mochi")
                             ]
                             currentIndex: Math.max(0,
                                 root.runnerIds.indexOf(card.settings.runner))

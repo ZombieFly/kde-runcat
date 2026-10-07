@@ -59,7 +59,7 @@ function normalizedSettings(type, source) {
     if (type === "runner") {
         const runnerIds = [
             "cat", "dog", "slime", "drop", "coffee",
-            "newton-cradle", "engine", "mochi", "ds-chan"
+            "newton-cradle", "engine", "mochi"
         ];
         return {
             runner: runnerIds.indexOf(value.runner) >= 0
