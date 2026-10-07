@@ -1,8 +1,8 @@
 PACKAGE_ID := com.github.runcatkde.runcat
 PACKAGE_DIR := package
 BUILD_DIR := build
-QMLLINT := $(or $(shell command -v qmllint6 2>/dev/null),$(shell command -v qmllint 2>/dev/null),/usr/lib/qt6/bin/qmllint)
-QMLTESTRUNNER := $(or $(shell command -v qmltestrunner6 2>/dev/null),$(shell command -v qmltestrunner 2>/dev/null),/usr/lib/qt6/bin/qmltestrunner)
+QMLLINT := $(or $(shell command -v qmllint6 2>/dev/null),$(shell command -v qmllint 2>/dev/null),$(wildcard /usr/lib64/qt6/bin/qmllint),/usr/lib/qt6/bin/qmllint)
+QMLTESTRUNNER := $(or $(shell command -v qmltestrunner6 2>/dev/null),$(shell command -v qmltestrunner 2>/dev/null),$(wildcard /usr/lib64/qt6/bin/qmltestrunner),/usr/lib/qt6/bin/qmltestrunner)
 
 .PHONY: check test install uninstall reload run package clean
 
